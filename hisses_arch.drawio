@@ -104,8 +104,8 @@
         <mxCell id="C4h9ntveOW_z0Q-EAas6-2" value="UserInput();&lt;div&gt;DisplayUpdate();&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;align=left;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="-10" y="180" width="130" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="C4h9ntveOW_z0Q-EAas6-4" value="initGame&lt;div&gt;spawn snake(a)&lt;/div&gt;&lt;div&gt;spawn block(a)&lt;/div&gt;&lt;div&gt;move(a)&lt;br&gt;&lt;div&gt;move(wasd)&lt;/div&gt;&lt;div&gt;pause&lt;/div&gt;&lt;div&gt;endgame&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;align=left;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="660" y="140" width="130" height="140" as="geometry" />
+        <mxCell id="C4h9ntveOW_z0Q-EAas6-4" value="initGame&lt;div&gt;spawn snake(a)&lt;/div&gt;&lt;div&gt;spawn block(a)&lt;/div&gt;&lt;div&gt;move(a)&lt;br&gt;&lt;div&gt;pause(state)&lt;/div&gt;&lt;div&gt;endgame&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="650" y="150" width="130" height="140" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
