@@ -2,7 +2,6 @@
 
 namespase s21 {
 
-
 typedef enum {
   Start,
   Pause,

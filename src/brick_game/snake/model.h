@@ -1,3 +1,5 @@
+#include '../shake.h' 
+
 namespace s21 {
 
 class SnakeModel {
@@ -6,7 +8,7 @@ class SnakeModel {
     ~SnakeModel();
     // тело модели змейки
     GameInfoStruct game;
-    Position 
+    Position_t Position;
 }
 //конструктор и деструктор 
 
