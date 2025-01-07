@@ -4,8 +4,8 @@ namespace s21 {
 
 class Snake {
     private:
-    int _snake_length, _snake_direction;
-    Position_t Position;
+    int snake_length_, snake_direction_;
+    Position_t Position_t;
 
     public:
     Snake();
@@ -16,7 +16,7 @@ class Snake {
 
 class Field {
     private:
-    int _field_width, _field_height;
+    int field_width_, field_height_;
     GameInfoStruct field;
 
     public:
@@ -26,7 +26,7 @@ class Field {
 
 class Apple {
     private:
-    int _apple_x, _apple_y;
+    int apple_x_, apple_y_;
 
     public:
     Apple();
