@@ -29,10 +29,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="X00inJrKpgiD-532tj3Z-6" value="&lt;div&gt;move(wasd)&lt;/div&gt;&lt;div&gt;pause&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;rounded=0;align=left;verticalAlign=top;" parent="1" vertex="1">
-          <mxGeometry x="250" y="160" width="130" height="140" as="geometry" />
+          <mxGeometry x="250" y="180" width="130" height="140" as="geometry" />
         </mxCell>
         <mxCell id="X00inJrKpgiD-532tj3Z-36" value="" style="group" parent="1" vertex="1" connectable="0">
-          <mxGeometry x="270" y="320" width="570" height="220" as="geometry" />
+          <mxGeometry x="260" y="360" width="570" height="220" as="geometry" />
         </mxCell>
         <mxCell id="X00inJrKpgiD-532tj3Z-10" value="" style="rounded=0;whiteSpace=wrap;html=1;opacity=15;align=left;verticalAlign=top;" parent="X00inJrKpgiD-532tj3Z-36" vertex="1">
           <mxGeometry width="570" height="220" as="geometry" />
@@ -94,9 +94,6 @@
         </mxCell>
         <mxCell id="X00inJrKpgiD-532tj3Z-38" value="Поле&lt;div&gt;-размер&lt;/div&gt;&lt;div&gt;-позиция змейки&lt;/div&gt;&lt;div&gt;-размер змейки&amp;nbsp;&lt;/div&gt;&lt;div&gt;-счет&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;opacity=15;align=left;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="10" y="470" width="110" height="330" as="geometry" />
-        </mxCell>
-        <mxCell id="IZi2IFzlFzDoxzatlFSC-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
-          <mxGeometry x="270" y="600" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="C4h9ntveOW_z0Q-EAas6-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="C4h9ntveOW_z0Q-EAas6-2" target="X00inJrKpgiD-532tj3Z-6">
           <mxGeometry relative="1" as="geometry" />
