@@ -2,8 +2,8 @@
 #define S21_SNAKE_GAME_H
 
 // Размер игрового поля
-#define BOARD_WIDTH 10
-#define BOARD_HEIGHT 20
+#define FIELD_WIDTH 10
+#define FIELD_HEIGHT 20
 
 #include <ncurses.h>
 
@@ -34,9 +34,10 @@ typedef enum {
   GameState_Over
 } GameState_t;  //
 
-// Структура для передачи информации об игре в интерфейс
-typedef struct {
-  int **field;  // Указатель на игровое поле
+
+  // Структура для передачи информации об игре в интерфейс
+  typedef struct {
+  std::vector<,std::vector<int>> **field_;  // Указатель на игровое поле
   int **next;  // Указатель на матрицу следующей фигуры
   int score;                    // Текущий счет
   int high_score;               // Рекордный счет
@@ -45,7 +46,7 @@ typedef struct {
   int pause;                    // Состояние паузы игры
   GameState_t state;            // Текущее состояние игры
 
-} GameInfo_t;
+  } GameInfo_t;
 
 // Структура для игрового поля
 typedef struct {
