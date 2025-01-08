@@ -17,8 +17,9 @@ namespace s21 {
 class Field {
     private:
     int field_width_, field_height_;
-    //std::vector<std::vector<int>> field_; 
+    std::vector<std::vector<int>> field_; 
     public:
+    //PrintField(field_);
     Field();
     ~Field(); 
 }; 

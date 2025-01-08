@@ -2,8 +2,8 @@
 #define S21_SNAKE_GAME_H
 
 // Размер игрового поля
-#define BOARD_WIDTH 10
-#define BOARD_HEIGHT 20
+#define FIELD_WIDTH 10
+#define FIELD_HEIGHT 20
 
 namespace s21 {
 
@@ -35,7 +35,7 @@ typedef enum {
 
   // Структура для передачи информации об игре в интерфейс
   typedef struct {
-  std::vector<std::vector<int>> field_;  // Указатель на игровое поле
+  std::vector<,std::vector<int>> **field_;  // Указатель на игровое поле
   int **next;  // Указатель на матрицу следующей фигуры
   int score;                    // Текущий счет
   int high_score;               // Рекордный счет
