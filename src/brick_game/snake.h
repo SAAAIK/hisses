@@ -9,7 +9,6 @@
 
 #include <ncurses.h>
 
-
 namespace s21 {
 
 // Типы  действий пользователя
