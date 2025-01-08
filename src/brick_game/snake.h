@@ -5,6 +5,8 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 
+#include <ncurses.h>
+
 namespace s21 {
 
 // Типы  действий пользователя
