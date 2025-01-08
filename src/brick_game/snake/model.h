@@ -2,27 +2,26 @@
 
 namespace s21 {
 
-class Snake {
+
+/*class Snake {
     private:
     int snake_length_, snake_direction_;
     Position_t Position_t;
-
     public:
     Snake();
     ~Snake();
     // тело модели змейки
-};
-//конструктор и деструктор 
+};*/
+//конструктор и деструктор  
 
 class Field {
     private:
     int field_width_, field_height_;
-    GameInfoStruct field;
-
+    //std::vector<std::vector<int>> field_; 
     public:
     Field();
-    ~Field();
-};
+    ~Field(); 
+}; 
 
 class Apple {
     private:
@@ -33,4 +32,4 @@ class Apple {
     ~Apple();
 };
 
-} // namespace s21
+}; // namespace s21
