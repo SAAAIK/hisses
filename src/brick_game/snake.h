@@ -7,6 +7,9 @@
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20
 
+#include <ncurses.h>
+
+
 namespace s21 {
 
 // Типы  действий пользователя
@@ -37,7 +40,7 @@ typedef enum {
 
   // Структура для передачи информации об игре в интерфейс
   typedef struct {
-  std::vector<,std::vector<int>> **field_;  // Указатель на игровое поле
+  std::vector<std::vector<int>> **field_;  // Указатель на игровое поле
   int **next;  // Указатель на матрицу следующей фигуры
   int score;                    // Текущий счет
   int high_score;               // Рекордный счет
@@ -48,11 +51,11 @@ typedef enum {
 
   } GameInfo_t;
 
-// Структура для игрового поля
+/*// Структура для игрового поля
 typedef struct {
-  int matrix[BOARD_HEIGHT][BOARD_WIDTH];
+  int matrix[FIELD_HEIGHT][FIELD_WIDTH];
 } GameBoard;
-
+*/
 // Определение функций для взаимодействия с пользовательским вводом и обновления
 // состояния
 void userInput(GameInfo_t *gameInfo, UserAction_t action, bool hold);
