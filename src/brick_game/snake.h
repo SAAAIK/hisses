@@ -38,7 +38,7 @@ typedef enum {
 } GameState_t;  //
 
 
-  // Структура для передачи информации об игре в интерфейс
+ /*// Структура для передачи информации об игре в интерфейс
   typedef struct {
   std::vector<std::vector<int>> **field_;  // Указатель на игровое поле
   int **next;  // Указатель на матрицу следующей фигуры
@@ -51,16 +51,16 @@ typedef enum {
 
   } GameInfo_t;
 
-/*// Структура для игрового поля
+// Структура для игрового поля
 typedef struct {
   int matrix[FIELD_HEIGHT][FIELD_WIDTH];
 } GameBoard;
-*/
+
 // Определение функций для взаимодействия с пользовательским вводом и обновления
 // состояния
 void userInput(GameInfo_t *gameInfo, UserAction_t action, bool hold);
 GameInfo_t updateCurrentState(GameInfo_t *gameInfo);
-
+*/
 } //s21 namespace
 
 #endif

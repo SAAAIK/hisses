@@ -3,8 +3,9 @@
 
 #include "../snake.h"
 #include <vector>
+#include <iostream>
 
-
+using namespace std;
 namespace s21 {
 
 /*class Snake {
@@ -22,9 +23,8 @@ class Field {
     private:
     int width_, height_;
     vector<vector<int>> field_;
-
     public:
-    void PrintField(field_);
+    void PrintField();
     Field();
     ~Field(); 
 }; 

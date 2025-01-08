@@ -1,17 +1,11 @@
-<<<<<<< HEAD
 #include <ncurses.h>
 #include "../brick_game/snake.h"
 
-=======
->>>>>>> refs/remotes/origin/main
-#include <iostream>
-#include "../brick_game/snake.h"
-using namespace s21;
-
 int main()
 {
-    Field::Field();
-    Field::PrintField(field_);
+    //s21::Field();
+    s21::Field myField;
+    myField.PrintField();
 
     return 0;
 }
