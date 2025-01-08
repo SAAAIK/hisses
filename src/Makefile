@@ -1,7 +1,7 @@
 CC = g++
 CC_FLAGS = -Wall -Werror -Wextra -std=c++17
-LIB_NAME = s21_matrix_oop
-CODE_PATH = ./code
+LIB_NAME = s21_brickgame_snake
+CODE_PATH = ./brick_game/snake/*.cpp  ./protytype/*.cpp 
 TESTS_PATH = ./test
 # COMMON_PATH = ./common
 # BUILD_PATH = ./build
@@ -30,7 +30,7 @@ uninstall:
 
 
 clean: 
-
+	rm -rf *.o *.g* *.info *.out report *.a *.dSYM debug *.txt $(TESTS_PATH)/make* ./report/*
 
 dvi: 
 
@@ -38,11 +38,25 @@ dvi:
 dist: 
 
 
-test:
-
-
 rebuild:
 
 run: ./protytype/main.cpp
 	$(CC) $(CC_FLAGS) -lgtest -lgmock -pthread ./protytype/main.cpp ./brick_game/snake/model.cpp -o ./protytype/main
 	./protytype/main
+
+TEST_COMPILE = $(CC) $(CC_FLAGS) $(TEST_FLAGS) tests/test*.cpp lib$(LIB_NAME).a $(CHECK_FLAGS) -L. -l$(LIB_NAME)
+
+test: $(LIB_NAME).a
+	$(TEST_COMPILE)
+	-./a.out
+	make clean
+
+$(LIB_NAME).a: $(LIB_NAME).o
+	ar rcs lib$(LIB_NAME).a *.o
+	rm -rf *.o
+	ranlib lib$(LIB_NAME).a
+	cp lib$(LIB_NAME).a $(LIB_NAME).a
+	cp lib$(LIB_NAME).a l$(LIB_NAME).a
+
+$(LIB_NAME).o:
+	$(CC) $(CC_FLAGS) -c $(CODE_PATH)

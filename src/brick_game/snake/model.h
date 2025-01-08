@@ -26,7 +26,9 @@ class Field {
     public:
     void PrintField();
     Field();
-    ~Field(); 
+    ~Field();
+    int get_width() const noexcept;
+    int get_height() const noexcept;
 }; 
 
 class Apple {
