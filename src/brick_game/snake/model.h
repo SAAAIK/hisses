@@ -1,4 +1,9 @@
+#ifndef S21_SNAKE_MODEL_H
+#define S21_SNAKE_MODEL_H
+
 #include '../snake.h' 
+
+
 
 namespace s21 {
 
@@ -34,3 +39,5 @@ class Apple {
 };
 
 }; // namespace s21
+
+#endif
