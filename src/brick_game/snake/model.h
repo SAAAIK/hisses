@@ -1,7 +1,8 @@
 #ifndef S21_SNAKE_MODEL_H
 #define S21_SNAKE_MODEL_H
 
-#include '../snake.h' 
+#include "../snake.h" 
+#include <vector>
 
 
 
@@ -21,10 +22,11 @@ namespace s21 {
 
 class Field {
     private:
-    int field_width_, field_height_;
-    std::vector<std::vector<int>> field_; 
+    int width_, height_;
+    vector<vector<int>> field_;
+
     public:
-    PrintField(field_);
+    void PrintField(field_);
     Field();
     ~Field(); 
 }; 

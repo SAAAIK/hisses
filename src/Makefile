@@ -44,5 +44,5 @@ test:
 rebuild:
 
 run: ./protytype/main.cpp
-	$(CC) $(CC_FLAGS) -lgtest -lgmock -pthread ./protytype/main.cpp -o ./protytype/main
+	$(CC) $(CC_FLAGS) -lgtest -lgmock -pthread ./protytype/main.cpp ./brick_game/snake/model.cpp -o ./protytype/main
 	./protytype/main
