@@ -24,7 +24,7 @@ class Field {
     int field_width_, field_height_;
     std::vector<std::vector<int>> field_; 
     public:
-    //PrintField(field_);
+    PrintField(field_);
     Field();
     ~Field(); 
 }; 

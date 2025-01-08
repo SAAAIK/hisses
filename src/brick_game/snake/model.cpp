@@ -11,3 +11,16 @@ s21::Field::Field() : width_(FIELD_WIDTH),height_(FIELD_HEIGHT){
 
 s21::Field::~Field(){             
 };
+
+s21::Field::PrintField(field_){
+    for (int i = 0; i < height_; i++) {
+        for (int j = 0; j < width_; j++) {
+            if (board_[j][i] == 1) {
+                std::cout << "x ";
+            } else {
+                std::cout << "- ";
+            }
+        }
+        std::cout << std::endl;
+    }
+};
