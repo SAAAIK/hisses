@@ -1,6 +1,8 @@
 #ifndef S21_SNAKE_GAME_H
 #define S21_SNAKE_GAME_H
 
+#include "snake/model.h"
+#include "snake.h"
 // Размер игрового поля
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20

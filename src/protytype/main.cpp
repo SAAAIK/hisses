@@ -1,4 +1,6 @@
-#include "ncurses.h"
+#include <ncurses.h>
+#include "../brick_game/snake.h"
+
 #include <iostream>
 
 int main(){

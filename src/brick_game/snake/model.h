@@ -1,12 +1,11 @@
 #ifndef S21_SNAKE_MODEL_H
 #define S21_SNAKE_MODEL_H
 
-#include '../snake.h' 
-
+#include "../snake.h"
+#include <vector>
 
 
 namespace s21 {
-
 
 /*class Snake {
     private:
