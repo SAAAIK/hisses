@@ -6,17 +6,19 @@
 #include <iostream>
 
 using namespace std;
-namespace s21 {
+enum class Direction { Up, Down, Left, Right };
 
-/*class Snake {
+namespace s21 {  
+class Snake {
     private:
-    int snake_length_, snake_direction_;
-    Position_t Position_t;
+    unsigned int snake_length_;
+    Direction snake_direction_;
+    std::vector<Position_t> snake_body_;
     public:
     Snake();
     ~Snake();
     // тело модели змейки
-};*/
+};
 //конструктор и деструктор  
 
 class Field {
@@ -27,13 +29,15 @@ class Field {
     void PrintField();
     Field();
     ~Field();
+    void get_snake();
+    void get_apple();
     int get_width() const noexcept;
     int get_height() const noexcept;
 }; 
 
 class Apple {
     private:
-    int apple_x_, apple_y_;
+    Position_t apple_pos_;
 
     public:
     Apple();

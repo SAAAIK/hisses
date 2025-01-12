@@ -4,7 +4,7 @@ using namespace std;
 Field::Field() : width_(FIELD_WIDTH),height_(FIELD_HEIGHT){
   field_ = vector<vector<int>>(
       width_, vector<int>(
-                 height_));  // двумерный вектор, FIELD_WIDTH cтрок cодержит FIELD_HEIGHT столбцов
+                 height_, 0));  // двумерный вектор, FIELD_WIDTH cтрок cодержит FIELD_HEIGHT столбцов
 
 };
 
@@ -28,4 +28,19 @@ void Field::PrintField(){
         }
         cout << endl;
     }
+};
+
+Snake::Snake() :snake_direction_=Right, snake_length_=4 {
+    snake_body_= vector<Position_t>();
+    snake_body_.insert(head(),{10,8});
+    snake_body_.insert(head(),{10,7});
+    snake_body_.insert(head(),{10,6});
+    snake_body_.insert(head(),{10,5});
+};
+
+Snake::~Snake(){             
+};
+
+Snake::get_snake(){
+    return snake_body_;
 };
