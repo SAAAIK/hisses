@@ -1,0 +1,8 @@
+
+haha 0
+haha 100
+hehe 400
+lala 0
+haha 0
+haha 400
+s 100

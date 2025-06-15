@@ -1,62 +1,72 @@
-CC = g++
-CC_FLAGS = -Wall -Werror -Wextra -std=c++17
-LIB_NAME = s21_brickgame_snake
-CODE_PATH = ./brick_game/snake/*.cpp  ./protytype/*.cpp 
-TESTS_PATH = ./test
-# COMMON_PATH = ./common
-# BUILD_PATH = ./build
-# TEST= tests.sh
-TEST_FLAGS = -std=c++17 -g
-GCOVFLAGS = -L. -l$(LIB_NAME) --coverage
-OS = $(shell uname)
+CC=gcc
+CFLAGS=-I./brick_game/tetris -I./gui/cli -std=c11
+LDFLAGS=-L./brick_game/tetris -ltetris_game -lncurses
+CHECK_FLAGS=$(shell pkg-config --cflags --libs check)
+GCOV_FLAGS=-fprofile-arcs -ftest-coverage
 
-ifeq ($(OS), Linux)
-	CHECK_FLAGS = -lgtest -lgmock -pthread
-#	CHECK_FLAGS = -lcheck -pthread -lrt -lm
+# Определение библиотек для тестов в зависимости от ОС
+OS := $(shell uname -s)
+ifeq ($(OS), Darwin)
+	TEST_LIBS = -lcheck -lm -lpthread
 else
-	CHECK_FLAGS = -lcheck 
+	TEST_LIBS = -lcheck -lsubunit -pthread -lrt -lm
 endif
 
-all: 
+# Исходные файлы и исполняемые файлы
+CLI_SOURCES=gui/cli/main.c gui/cli/interface.c gui/cli/user_input.c gui/cli/top_score.c
+EXEC=tetris_game
+TEST_SOURCES=tests/unit_tests.c tests/tests.c
+TEST_EXEC=run_tests
 
-libsnake_game:
-	$(CC) $(CFLAGS) -c brick_game/snake/snake_game.cpp -o brick_game/tetris/tetris_game.o
+.PHONY: all clean libtetris_game test gcov_report
+
+all: libtetris_game $(EXEC)
+
+libtetris_game:
+	$(CC) $(CFLAGS) -c brick_game/tetris/tetris_game.c -o brick_game/tetris/tetris_game.o
 	ar rcs brick_game/tetris/libtetris_game.a brick_game/tetris/tetris_game.o
 
-install: 
+$(EXEC): $(CLI_SOURCES)
+	$(CC) $(CFLAGS) $(CLI_SOURCES) $(LDFLAGS) -o $(EXEC)
+
+test: libtetris_game
+	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_SOURCES) brick_game/tetris/tetris_game.c -o $(TEST_EXEC) $(LDFLAGS) $(CHECK_FLAGS) $(TEST_LIBS)
+	./$(TEST_EXEC)
+
+gcov_report: test
+	rm -rf report
+	mkdir report
+	gcovr -r . --html --html-details -o report/gcov_report.html --exclude tests/
+	open report/gcov_report.html
+
+clean:
+	rm -f $(EXEC) $(TEST_EXEC)
+	rm -f brick_game/tetris/*.o brick_game/tetris/libtetris_game.a
+	rm -f *.gcda *.gcno *.o *.html *.css brick_game/tetris/*.gcno
+	rm -rf report
+	rm -rf build
 
 
-uninstall: 
+leaks:
+	leaks -atExit -- ./tetris_game
 
+style :
+	clang-format --style=google -n brick_game/tetris/*.h brick_game/tetris/*.c gui/cli/*.c gui/cli/*.h
 
-clean: 
-	rm -rf *.o *.g* *.info *.out report *.a *.dSYM debug *.txt $(TESTS_PATH)/make* ./report/*
+install: all
+	mkdir -p build
+	cp $(EXEC) build/$(EXEC)
 
-dvi: 
+uninstall:
+	rm -rf build
 
+dist:
+	mkdir -p dist
+	tar -cvzf dist/$(DIST_NAME).tar.gz $(DIST_FILES)
 
-dist: 
-
-
-rebuild:
-
-run: ./protytype/main.cpp
-	$(CC) $(CC_FLAGS) -lgtest -lgmock -pthread ./protytype/main.cpp ./brick_game/snake/model.cpp -o ./protytype/main
-	./protytype/main
-
-TEST_COMPILE = $(CC) $(CC_FLAGS) $(TEST_FLAGS) tests/test*.cpp lib$(LIB_NAME).a $(CHECK_FLAGS) -L. -l$(LIB_NAME)
-
-test: $(LIB_NAME).a
-	$(TEST_COMPILE)
-	-./a.out
-	make clean
-
-$(LIB_NAME).a: $(LIB_NAME).o
-	ar rcs lib$(LIB_NAME).a *.o
-	rm -rf *.o
-	ranlib lib$(LIB_NAME).a
-	cp lib$(LIB_NAME).a $(LIB_NAME).a
-	cp lib$(LIB_NAME).a l$(LIB_NAME).a
-
-$(LIB_NAME).o:
-	$(CC) $(CC_FLAGS) -c $(CODE_PATH)
+dvi:  
+ifeq ($(OS), Darwin)
+	open ./doc/documentation.md
+else
+	cat ./doc/documentation.md
+endif
