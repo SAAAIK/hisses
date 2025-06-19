@@ -28,6 +28,27 @@ typedef struct {
     int dir_y; // направление по y (-1,0,1)
 } Snake;
 
-void init_snake(Snake *snake, int start_x, int start_y); // инициализация змейки
-void print_field(const Snake *snake); // отрисовка поля
+// Структура для игрового поля
+typedef struct {
+  int matrix[BOARD_HEIGHT][BOARD_WIDTH];
+} GameBoard;
+
+// Структура для передачи информации об игре в интерфейс
+typedef struct {
+  int **field; // Указатель на игровое поле
+  int *snake_p; // Указатель на змейку
+  int score;                   // Текущий счет
+  int high_score;              // Рекордный счет
+  int level;                   // Текущий уровень
+  int speed;                   // Скорость падения фигур
+  int pause;                   // Состояние паузы игры
+  Snake snake;
+  //GameState_t state;           // Текущее состояние игры
+
+} GameInfo_t;
+
+void initGame(GameInfo_t *gameInfo);
+void print_field(GameInfo_t *gameInfo, Snake *snake);
+void init_snake(GameInfo_t *gameInfo);
+void move_snake(GameInfo_t *gameInfo);
 #endif
