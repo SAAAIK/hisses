@@ -22,7 +22,7 @@ typedef struct {
 } Segment;
 
 typedef struct {
-    Segment segments[MAX_LENGTH];
+    Segment *segments;
     int length; // текущая длина змейки
     int dir_x; // направление по x (-1,0,1)
     int dir_y; // направление по y (-1,0,1)
@@ -32,6 +32,27 @@ typedef struct {
 typedef struct {
   int matrix[BOARD_HEIGHT][BOARD_WIDTH];
 } GameBoard;
+
+// Структура состояния игры
+typedef enum {
+  //GameState_WaitingStart,
+  GameState_Running,
+  //GameState_Paused,
+  //GameState_Over
+} GameState_t; //
+
+// Типы  действий пользователя
+typedef enum {
+  //Start,
+  //Pause,
+  //Terminate,
+  Left,
+  Right,
+  Down,
+  Up,
+  //Action,
+  NoAction
+} UserAction_t; //
 
 // Структура для передачи информации об игре в интерфейс
 typedef struct {
@@ -43,12 +64,22 @@ typedef struct {
   int speed;                   // Скорость падения фигур
   int pause;                   // Состояние паузы игры
   Snake snake;
-  //GameState_t state;           // Текущее состояние игры
+  GameState_t state;           // Текущее состояние игры
 
 } GameInfo_t;
 
+void userInput(GameInfo_t *gameInfo, UserAction_t action/*, bool hold*/);
+
 void initGame(GameInfo_t *gameInfo);
-void print_field(GameInfo_t *gameInfo, Snake *snake);
+//void print_field(GameInfo_t *gameInfo, Snake *snake);
+void removePieceFromField(GameInfo_t *gameInfo);
+void PlacePieceOnField(GameInfo_t *gameInfo, Snake *snake);
 void init_snake(GameInfo_t *gameInfo);
 void move_snake(GameInfo_t *gameInfo);
+int canMove(GameInfo_t *gameInfo);
+void movePieceRight(GameInfo_t *gameInfo);
+void movePieceLeft(GameInfo_t *gameInfo);
+void movePieceUp(GameInfo_t *gameInfo);
+void movePieceDown(GameInfo_t *gameInfo);
+void freeGameResources(GameInfo_t *gameInfo);
 #endif
