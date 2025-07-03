@@ -28,10 +28,10 @@ typedef struct {
     int dir_y; // направление по y (-1,0,1)
 } Snake;
 
-// Структура для игрового поля
 typedef struct {
-  int matrix[BOARD_HEIGHT][BOARD_WIDTH];
-} GameBoard;
+    int x;
+    int y;
+} Apple;
 
 // Структура состояния игры
 typedef enum {
@@ -64,6 +64,7 @@ typedef struct {
   int speed;                   // Скорость падения фигур
   int pause;                   // Состояние паузы игры
   Snake snake;
+  Apple apple;
   GameState_t state;           // Текущее состояние игры
 
 } GameInfo_t;
@@ -73,10 +74,14 @@ void userInput(GameInfo_t *gameInfo, UserAction_t action/*, bool hold*/);
 void initGame(GameInfo_t *gameInfo);
 //void print_field(GameInfo_t *gameInfo, Snake *snake);
 void removePieceFromField(GameInfo_t *gameInfo);
-void PlacePieceOnField(GameInfo_t *gameInfo, Snake *snake);
-void init_snake(GameInfo_t *gameInfo);
+void placePieceOnField(GameInfo_t *gameInfo, Snake *snake);
+
+void spawnSnake(GameInfo_t *gameInfo);
+void spawnApple(GameInfo_t *gameInfo);
 void move_snake(GameInfo_t *gameInfo);
 int canMove(GameInfo_t *gameInfo);
+void growSnake(GameInfo_t *gameInfo);
+
 void movePieceRight(GameInfo_t *gameInfo);
 void movePieceLeft(GameInfo_t *gameInfo);
 void movePieceUp(GameInfo_t *gameInfo);

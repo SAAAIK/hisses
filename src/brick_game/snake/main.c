@@ -58,7 +58,7 @@ void userInput(GameInfo_t *gameInfo, UserAction_t action /*, bool hold*/)
 int main()
 {
   clock_t lastDropTime = clock();
-  double dropInterval = 1000000.; // Интервал падения (скорость)
+  double dropInterval = 2000000.; // Интервал падения (скорость)
 
   GameInfo_t gameInfo;
   initializeGame(&gameInfo);
@@ -68,7 +68,6 @@ int main()
   {
     int ch = getch();
     UserAction_t action = getUserAction(ch /*&start_pressed, &gameInfo*/);
-
     userInput(&gameInfo, action /*, hold*/);
     if (clock() - lastDropTime >= dropInterval)
     {
@@ -77,7 +76,8 @@ int main()
       clear();
       printField(&gameInfo);
       refresh();
-      dropInterval = 1000000.;
+      printf("\n%d\n", canMove(&gameInfo));
+      dropInterval = 2000000.;
     }
     //printField(&gameInfo);
   }
