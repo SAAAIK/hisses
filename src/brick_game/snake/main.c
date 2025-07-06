@@ -55,8 +55,20 @@ void userInput(GameInfo_t *gameInfo, UserAction_t action /*, bool hold*/)
   }
 }
 
-int main()
+int main() //КОНТРОЛЛЕР
 {
+  nodelay(strscr,TRUE);
+  
+  //Model_init();
+  //View_init();
+
+  while (1) {
+      UserAction_t action =  getUserAction(ch);
+      userInput(&gameInfo, action /*, hold*/); // Обновляет модель
+      View_render(); // Запрашивает данные у модели через контроллер
+      sleep(interval);
+}
+
   clock_t lastDropTime = clock();
   double dropInterval = 2000000.; // Интервал падения (скорость)
 
@@ -64,7 +76,7 @@ int main()
   initializeGame(&gameInfo);
   initGame(&gameInfo);
 
-  while (1)
+  while (1) 
   {
     int ch = getch();
     UserAction_t action = getUserAction(ch /*&start_pressed, &gameInfo*/);

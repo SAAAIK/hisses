@@ -25,7 +25,7 @@ void userInput(GameInfo_t *gameInfo, UserAction_t action/*, bool hold*/) {
     gameInfo->state = GameState_Over;
     break;*/
   case Left:
-    if (!gameInfo->pause)
+    if (!gameInfo->pause) 
       movePieceLeft(gameInfo);
     break;
   case Right:
