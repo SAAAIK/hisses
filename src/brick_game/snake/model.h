@@ -25,13 +25,12 @@ typedef struct {
 } Segment;
 
 typedef enum {
-    KEY_UP,
-    KEY_DOWN,
-    KEY_LEFT,
-    KEY_RIGHT,
-    KEY_ENTER,
-    KEY_PAUSE,
-    KEY_QUIT,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    PAUSE,
+    QUIT,
     NO_INPUT
 } UserAction_t;
 
@@ -61,7 +60,6 @@ typedef enum {
 
 typedef struct {
   int **field; // Указатель на игровое поле;
-  int *snake_p; // Указатель на змейку
   int score;                   // Текущий счет
   int high_score;              // Рекордный счет
   int level;                   // Текущий уровень
@@ -89,7 +87,13 @@ void model_field_init(model* model);
 void model_snake_init(model* model);
 void model_free(model* model);
 void send_action_to_model(UserAction_t);
-
+void update_model(model* model, UserAction_t action);
+void move_snake(model* model);
+int Model_getScore(const model* model);
+int Model_getLevel(const model* model);
+int Model_getSnakeLength(const model* model);
+Segment Model_getSnakeSegment(const model* model, int index);
+GameState_t Model_getGameState(const model* model);
 /*
 //void print_field(GameInfo_t *gameInfo, Snake *snake);
 void removePieceFromField(GameInfo_t *gameInfo);

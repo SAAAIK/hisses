@@ -1,58 +1,76 @@
 #include "controller.h"
 
-UserAction_t userInput() {
-  int ch = getch();
-
-  if (ch != ERR) {  // Если клавиша нажата
-    switch (ch) {
-      case KEY_UP:
-        return KEY_UP;
-      case KEY_DOWN:
-        return KEY_DOWN;
-      case 'p':
-        return KEY_PAUSE;
-      case 'q':
-        return KEY_QUIT;
-      default:
-        return NO_INPUT;
-    }
-  }
-  else{return NO_INPUT;}
+Controller* Controller_init(model* model) {
+    Controller* controller = malloc(sizeof(Controller));
+    controller->model = model;
+    return controller;
 }
 
+void Controller_destroy(Controller* controller) {
+    free(controller);
+}
+
+GameInfo_t* Controller_getGameState(Controller* controller) {
+    if (!controller || !controller->model) return NULL;
+    return &controller->model->gameInfo;  // Возвращаем указатель на оригинал
+}
+
+UserAction_t userInput() {
+    int ch = getch(); // Получаем нажатую клавишу
+    
+    if (ch != ERR) {  // Если была нажата клавиша
+        switch (ch) {
+            case KEY_UP:
+                return UP;
+            case KEY_DOWN:
+                return DOWN;
+            case KEY_LEFT:
+                return LEFT;
+            case KEY_RIGHT:
+                return RIGHT;
+            case 'p':
+            case 'P':
+                return PAUSE;
+            case 'q':
+            case 'Q':
+                return QUIT;
+            default:
+                return NO_INPUT;
+        }
+    }
+    
+    return NO_INPUT; // Если клавиша не нажата
+}
+
+
 void GameLoop() {
-  initscr(); // Инициализация ncurses
-  nodelay(stdscr, TRUE);
-  model_init();
+    // Инициализация
+    initscr();
+    nodelay(stdscr, TRUE);
+    keypad(stdscr, TRUE);
+    
+    // Создаем модель и контроллер
+    model* model = model_init();
+    Controller* controller = Controller_init(model);
+    
+    while (1) {
+        // 1. Обработка ввода
+        UserAction_t action = userInput();
+        // 2. Обновление модели
+        update_model(model, action);
+        // 3. Отрисовка
+        renderGame(controller);
+        // 4. Задержка 100мс
+        napms(100); 
+        }
+    
+    // Очистка
+    Controller_destroy(controller);
+    model_free(model);
+    endwin();
+}
 
-  // View_init();
-
-  while (1) {
-    UserAction_t action = userInput(ch);
-    updateModel(action);  // Обновляет модель
-    renderGame(); // Запрашивает данные у модели через контроллер
-    sleep(10);
-  }
+int main(){
+    GameLoop();
+    return 1;
 };
-
-int main() {
-  GameLoop();
-  return 1;
-};
-
-
-
-
-
-/*
-GameState_t Controller_getGameState(GameState_t* controller) {
-    GameState_t state;
-
-    // Заполнение данных из модели (контроллер знает, как их получить)
-    state.score = Model_getScore(controller->model);
-    state.level = Model_getLevel(controller->model);
-    state.field = Model_getFieldSnapshot(controller->model); // Копия поля
-
-    return state;
-};
-*/

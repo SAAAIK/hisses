@@ -1,8 +1,13 @@
-#include "model.h"
 #include "interface.h"
+#include "model.h"
 
+typedef struct {
+    model* model;
+} Controller;
 
+Controller* Controller_init(model* model);
+void Controller_destroy(Controller* controller);
+GameInfo_t* Controller_getGameState(Controller* controller);
 void GameLoop();
 UserAction_t userInput();
-//GameState_t Controller_getGameState(GameState_t* controller) ;
-//void userInput(GameInfo_t *gameInfo, UserAction_t action/*, bool hold*/);
+//void Controller_handleInput(Controller* controller, UserAction_t action);

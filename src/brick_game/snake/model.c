@@ -78,3 +78,75 @@ void model_free(model* model) {
     if (model->gameInfo.snake.segments) free(model->gameInfo.snake.segments);
     free(model);
 };
+
+void move_snake(model* model) {
+       struct {
+        Segment *segments;
+        int length;
+        int dir_x;
+        int dir_y;
+    }* snake = &(model->gameInfo.snake); //Тут олени пирамиду построили.
+    
+    // Сохраняем хвост
+    Segment old_tail = snake->segments[snake->length-1];
+    
+    // Сдвигаем сегменты
+    for (int i = snake->length-1; i > 0; i--) {
+        snake->segments[i] = snake->segments[i-1];
+    }
+    
+    // Обновляем голову
+    snake->segments[0].x += snake->dir_x;
+    snake->segments[0].y += snake->dir_y;
+}
+
+
+void update_model(model* model, UserAction_t action) {
+    if (model == NULL) return;
+    
+    if (model->gameInfo.state == Pause || model->gameInfo.state == GameOver) {
+        return;
+    }
+    else if (model->gameInfo.state == Spawn) {
+        model->gameInfo.state = Moving;
+    }
+    else if (model->gameInfo.state == Moving) {
+        switch (action) {
+            case UP:
+                if (model->gameInfo.snake.dir_y == 0) {
+                    model->gameInfo.snake.dir_x = 0;
+                    model->gameInfo.snake.dir_y = -1;
+                }
+                break;
+            case DOWN:
+                if (model->gameInfo.snake.dir_y == 0) {
+                    model->gameInfo.snake.dir_x = 0;
+                    model->gameInfo.snake.dir_y = 1;
+                }
+                break;
+            case LEFT:
+                if (model->gameInfo.snake.dir_x == 0) {
+                    model->gameInfo.snake.dir_x = -1;
+                    model->gameInfo.snake.dir_y = 0;
+                }
+                break;
+            case RIGHT:
+                if (model->gameInfo.snake.dir_x == 0) {
+                    model->gameInfo.snake.dir_x = 1;
+                    model->gameInfo.snake.dir_y = 0;
+                }
+                break;
+            case PAUSE:
+                model->gameInfo.state = Pause;
+                break;
+            case NO_INPUT:
+            default:
+                break;
+        }
+        
+        move_snake(model);
+       // checkCollisions(model);
+    }
+}
+
+
