@@ -81,7 +81,7 @@ void GameLoop() {
         // 3. Отрисовка
         renderGame(controller);
         // 4. Задержка 100мс
-        napms(100); 
+        napms(1000); 
         }
     
     // Очистка

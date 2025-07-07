@@ -2,6 +2,8 @@
 #include "controller.h"
 #include <ncurses.h>
 
+
+
 void renderGame(Controller* controller) {
     // 1. Получаем состояние через контроллер
     GameInfo_t state = Controller_getGameState(controller);
@@ -11,9 +13,12 @@ void renderGame(Controller* controller) {
     
     // 3. Отрисовка границ
     for (int y = 0; y < IBOARD_HEIGHT+ 2; y++) {
-        mvprintw(y, 0, "#");
-        mvprintw(y, IBOARD_WIDTH
-+ 1, "#");
+        mvprintw(y, 0, "$");
+        mvprintw(y, IBOARD_WIDTH+ 1, "#");
+    }
+
+    if (state.state == Spawn){
+         mvprintw(5, IBOARD_WIDTH/2, "SPAWN");
     }
     /*
     // 4. Отрисовка змейки
@@ -32,8 +37,9 @@ void renderGame(Controller* controller) {
     // 5. Отрисовка UI
     mvprintw(0, 100, "Score: %d", state.score);
     mvprintw(1, 100, "Level: %d", state.level);
+    mvprintw(2, 100, "State: %d", state.state);
     
     // 6. Обновление экрана
     refresh();
-    napms(10000); 
+    napms(100); 
 }

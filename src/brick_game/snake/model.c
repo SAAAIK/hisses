@@ -27,7 +27,7 @@ model* model_init()
     */
 
 
-    printf("1");
+    //printf("1");
     return model_exec;
 }
 
@@ -104,7 +104,7 @@ void update_model(model* model, UserAction_t action) {
         return;
     }
     else if (model->gameInfo.state == Spawn) {
-        model->gameInfo.state = Moving;
+        return;//model->gameInfo.state = Moving;
     }
     else if (model->gameInfo.state == Moving) {
         switch (action) {
@@ -132,9 +132,9 @@ void update_model(model* model, UserAction_t action) {
                     model->gameInfo.snake.dir_y = 0;
                 }
                 break;
-            case PAUSE:
+           /* case PAUSE:
                 model->gameInfo.state = Pause;
-                break;
+                break;*/
             case NO_INPUT:
             default:
                 break;
