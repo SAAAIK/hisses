@@ -1,8 +1,10 @@
-#ifndef SNAKE_INTERFACE_H
-#define SNAKE_INTERFACE_H
-
+#ifndef INTERFACE_H
+#define INTERFACE_H
 #include "controller.h"
-
-typedef struct Controller Controller;
+// Предварительное объявление
+//typedef struct Controller* Controller;
+#define IBOARD_WIDTH 10
+#define IBOARD_HEIGHT 20
 void renderGame(Controller* controller);
+
 #endif

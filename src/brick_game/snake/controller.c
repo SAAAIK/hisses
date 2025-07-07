@@ -1,8 +1,13 @@
 #include "controller.h"
+#include "interface.h"
+#include <stdlib.h>
+#include <string.h>
 
 Controller* Controller_init(model* model) {
     Controller* controller = malloc(sizeof(Controller));
-    controller->model = model;
+    if (controller) {
+        controller->model = model;
+    }
     return controller;
 }
 
@@ -10,10 +15,25 @@ void Controller_destroy(Controller* controller) {
     free(controller);
 }
 
-GameInfo_t* Controller_getGameState(Controller* controller) {
-    if (!controller || !controller->model) return NULL;
-    return &controller->model->gameInfo;  // Возвращаем указатель на оригинал
-}
+GameInfo_t Controller_getGameState(Controller* controller) {
+    GameInfo_t state = {0};
+    if (!controller || !controller->model) return state;
+    
+    // Копируем простые поля
+    state = controller->model->gameInfo;
+    
+    // Копируем сегменты змейки
+    state.snake.segments = malloc(state.snake.length * sizeof(Segment));
+    if (state.snake.segments) {
+        memcpy(state.snake.segments, 
+               controller->model->gameInfo.snake.segments,
+               state.snake.length * sizeof(Segment));
+    } else {
+        state.snake.length = 0;
+    }
+    
+    return state;
+}   
 
 UserAction_t userInput() {
     int ch = getch(); // Получаем нажатую клавишу

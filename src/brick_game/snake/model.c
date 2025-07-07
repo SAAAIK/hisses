@@ -80,15 +80,11 @@ void model_free(model* model) {
 };
 
 void move_snake(model* model) {
-       struct {
-        Segment *segments;
-        int length;
-        int dir_x;
-        int dir_y;
-    }* snake = &(model->gameInfo.snake); //Тут олени пирамиду построили.
+    
+    Snake* snake = &model->gameInfo.snake;
     
     // Сохраняем хвост
-    Segment old_tail = snake->segments[snake->length-1];
+    //Segment old_tail = snake->segments[snake->length-1];
     
     // Сдвигаем сегменты
     for (int i = snake->length-1; i > 0; i--) {

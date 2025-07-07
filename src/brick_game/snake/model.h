@@ -1,5 +1,5 @@
-#ifndef S21_SNAKE_GAME_START_H
-#define S21_SNAKE_GAME_START_H
+#ifndef MODEL_H
+#define MODEL_H
 
 // Размер игрового поля
 #define BOARD_WIDTH 10
@@ -11,7 +11,9 @@
 
 #define DEFAULT_LEVEL 1
 #define DEFAULT_SPEED 1
-
+#define HEAD_COLOR 1
+#define BODY_COLOR 2
+#define APPLE_COLOR 3
 #include <ncurses.h>
 #include <stdbool.h> // Для использования bool
 #include <stdio.h>
@@ -58,6 +60,13 @@ typedef enum {
    Growing
 } GameState_t;
 
+typedef  struct {
+    Segment *segments;
+    int length; // текущая длина змейки
+    int dir_x; // направление по x (-1,0,1)
+    int dir_y; // направление по y (-1,0,1)
+    } Snake;
+
 typedef struct {
   int **field; // Указатель на игровое поле;
   int score;                   // Текущий счет
@@ -65,12 +74,7 @@ typedef struct {
   int level;                   // Текущий уровень
   int speed;                   // Скорость падения фигур
   int pause;                   // Состояние паузы игры
-  struct {
-    Segment *segments;
-    int length; // текущая длина змейки
-    int dir_x; // направление по x (-1,0,1)
-    int dir_y; // направление по y (-1,0,1)
-    } snake;
+  Snake snake;
   Apple apple;
   GameState_t state;           // Текущее состояние игры
 
@@ -111,4 +115,5 @@ void movePieceUp(GameInfo_t *gameInfo);
 void movePieceDown(GameInfo_t *gameInfo);
 void freeGameResources(GameInfo_t *gameInfo);
 */
+//typedef struct Controller Controller;
 #endif

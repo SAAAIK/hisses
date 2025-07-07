@@ -1,4 +1,6 @@
 #include "interface.h"
+#include "controller.h"
+#include <ncurses.h>
 
 void renderGame(Controller* controller) {
     // 1. Получаем состояние через контроллер
@@ -8,28 +10,30 @@ void renderGame(Controller* controller) {
     clear();
     
     // 3. Отрисовка границ
-    for (int y = 0; y < FIELD_HEIGHT + 2; y++) {
+    for (int y = 0; y < IBOARD_HEIGHT+ 2; y++) {
         mvprintw(y, 0, "#");
-        mvprintw(y, FIELD_WIDTH + 1, "#");
+        mvprintw(y, IBOARD_WIDTH
++ 1, "#");
     }
-    
+    /*
     // 4. Отрисовка змейки
-    for (int i = 0; i < state.snake_length; i++) {
+    for (int i = 0; i < state.snake.length; i++) {
         if (i == 0) {
             attron(COLOR_PAIR(HEAD_COLOR));
-            mvprintw(state.snake[i].y + 1, state.snake[i].x + 1, "O");
+            mvprintw(state.snake.segments[i].y + 1, state.snake.segments[i].x + 1, "O");
             attroff(COLOR_PAIR(HEAD_COLOR));
         } else {
             attron(COLOR_PAIR(BODY_COLOR));
-            mvprintw(state.snake[i].y + 1, state.snake[i].x + 1, "o");
+            mvprintw(state.snake.segments[i].y + 1, state.snake.segments[i].x + 1, "o");
             attroff(COLOR_PAIR(BODY_COLOR));
         }
     }
-    
+    */
     // 5. Отрисовка UI
-    mvprintw(0, 0, "Score: %d", state.score);
-    mvprintw(1, 0, "Level: %d", state.level);
+    mvprintw(0, 100, "Score: %d", state.score);
+    mvprintw(1, 100, "Level: %d", state.level);
     
     // 6. Обновление экрана
     refresh();
+    napms(10000); 
 }
