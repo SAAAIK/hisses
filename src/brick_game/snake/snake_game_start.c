@@ -30,14 +30,6 @@ void initGame(GameInfo_t *gameInfo)
 // Обновление поля и вывод
 void placePieceOnField(GameInfo_t *gameInfo, Snake *snake)
 {
-    // // Заполняем поле точками
-    // for (int y = 0; y < BOARD_HEIGHT; y++) {
-    //     for (int x = 0; x < BOARD_WIDTH; x++) {
-    //         gameInfo->field[y][x] = 0;
-    //     }
-    // }
-
-    // Отмечаем сегменты змейки тире '-'
     for (int i = 0; i < snake->length; i++)
     {
         int x = snake->segments[i].x;
@@ -48,14 +40,6 @@ void placePieceOnField(GameInfo_t *gameInfo, Snake *snake)
             gameInfo->field[y][x] = 1;
         }
     }
-
-    // // Вывод поля построчно
-    // for (int y = 0; y < BOARD_HEIGHT; y++) {
-    //     for (int x = 0; x < BOARD_WIDTH; x++) {
-    //         printf("%c", gameInfo->field[y][x]);
-    //     }
-    //     printf("\n");
-    // }
 }
 
 // инициализация змейки
@@ -87,13 +71,6 @@ void spawnApple(GameInfo_t *gameInfo)
     gameInfo->apple.x = x;
     gameInfo->apple.y = y;
     gameInfo->field[y][x] = 1;
-
-    // gameInfo->apple.x = rand() % 20;
-    // gameInfo->apple.y = rand() % 20;
-    // if (gameInfo->field[gameInfo->apple.x][gameInfo->apple.y] == 1){
-    //     spawnApple(gameInfo);
-    // }
-    // else gameInfo->field[gameInfo->apple.x][gameInfo->apple.y] = 1;
 }
 
 // Функция временно удаляет фигуру с игр поля перед проверкой перемещения
@@ -113,32 +90,33 @@ void move_snake(GameInfo_t *gameInfo)
     // Сдвигаем сегменты: начиная с хвоста к голове
     if (canMove(gameInfo) == 1)
     {   removePieceFromField(gameInfo);
-        for (int i = gameInfo->snake.length - 1; i > 0; i--)
-        {
-            gameInfo->snake.segments[i] = gameInfo->snake.segments[i - 1];
-        }
-        // Обновляем голову в соответствии с направлением
-        gameInfo->snake.segments[0].x += gameInfo->snake.dir_x;
-        gameInfo->snake.segments[0].y += gameInfo->snake.dir_y;
+        //shift state
+        snakeShifting(gameInfo);
         placePieceOnField(gameInfo, &gameInfo->snake);
     }
     else if (canMove(gameInfo) == 2)
     {   removePieceFromField(gameInfo);
-        for (int i = gameInfo->snake.length - 1; i > 0; i--)
-        {
-            gameInfo->snake.segments[i] = gameInfo->snake.segments[i - 1];
-        }
-        // Обновляем голову в соответствии с направлением
-        gameInfo->snake.segments[0].x += gameInfo->snake.dir_x;
-        gameInfo->snake.segments[0].y += gameInfo->snake.dir_y;
+        //shift state
+        snakeShifting(gameInfo);
         growSnake(gameInfo);
         placePieceOnField(gameInfo, &gameInfo->snake);
+        //spawn state
         spawnApple(gameInfo);
     }
     else if (canMove(gameInfo) == 0)
     {
         exit(1);
     }
+}
+
+void snakeShifting (GameInfo_t *gameInfo){
+for (int i = gameInfo->snake.length - 1; i > 0; i--)
+        {
+            gameInfo->snake.segments[i] = gameInfo->snake.segments[i - 1];
+        }
+        // Обновляем голову в соответствии с направлением
+        gameInfo->snake.segments[0].x += gameInfo->snake.dir_x;
+        gameInfo->snake.segments[0].y += gameInfo->snake.dir_y;
 }
 
 int canMove(GameInfo_t *gameInfo)

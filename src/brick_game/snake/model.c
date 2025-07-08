@@ -1,13 +1,13 @@
 #include "model.h"
 
 // ==========Функция - инициализация игрового поля
-model* model_init()
+model* modelInit()
 { 
     model* model_exec = (model*)malloc(sizeof(model));
      if (!model_exec) return NULL;
     
-    model_field_init(model_exec);
-    model_snake_init(model_exec);
+    modelFieldInit(model_exec);
+    modelSnakeInit(model_exec);
 
     //проставить остальные поля
     /*
@@ -31,7 +31,8 @@ model* model_init()
     return model_exec;
 }
 
-void model_field_init(model* model){
+// функция для выделения памяти поля
+void modelFieldInit(model* model){
     model->gameInfo.field = (int**)malloc(BOARD_HEIGHT * sizeof(int*));
         if (!model->gameInfo.field) {
             free(model);
@@ -50,7 +51,8 @@ void model_field_init(model* model){
     model->gameInfo.state = Spawn;
     };
 
-void model_snake_init(model* model){
+// функция для выделения памяти змейки
+void modelSnakeInit(model* model){
     model->gameInfo.snake.segments = (Segment*)malloc(MAX_LENGTH * sizeof(Segment));
     if (!model->gameInfo.snake.segments) {
         for (int i = 0; i < BOARD_HEIGHT; i++) free(model->gameInfo.field[i]);
@@ -65,8 +67,8 @@ void model_snake_init(model* model){
     };
 
 
-
-void model_free(model* model) {
+// функция для очищения всей памяти
+void modelFree(model* model) {
     if (!model) return;
     // Освобождаем поле
     if (model->gameInfo.field) {
@@ -79,7 +81,8 @@ void model_free(model* model) {
     free(model);
 };
 
-void move_snake(model* model) {
+// функция для сдвига змейки 
+void moveSnake(model* model) {
     
     Snake* snake = &model->gameInfo.snake;
     
@@ -96,8 +99,8 @@ void move_snake(model* model) {
     snake->segments[0].y += snake->dir_y;
 }
 
-
-void update_model(model* model, UserAction_t action) {
+// ???
+void updateSnake(model* model, UserAction_t action) {
     if (model == NULL) return;
     
     if (model->gameInfo.state == Pause || model->gameInfo.state == GameOver) {
@@ -140,7 +143,7 @@ void update_model(model* model, UserAction_t action) {
                 break;
         }
         
-        move_snake(model);
+        moveSnake(model);
        // checkCollisions(model);
     }
 }

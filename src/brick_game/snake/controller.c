@@ -35,6 +35,7 @@ GameInfo_t Controller_getGameState(Controller* controller) {
     return state;
 }   
 
+// надо так по спецификации void userInput(UserAction_t action, bool hold);
 UserAction_t userInput() {
     int ch = getch(); // Получаем нажатую клавишу
     

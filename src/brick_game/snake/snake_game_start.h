@@ -41,6 +41,18 @@ typedef enum {
   //GameState_Over
 } GameState_t; //
 
+// Данные модели
+typedef enum {
+   GameStart,
+   Spawn,
+   Moving,
+   Shifting,
+   Colliding,
+   GameOver,
+   Pause,
+   GameExit
+} GameState_t;
+
 // Типы  действий пользователя
 typedef enum {
   //Start,

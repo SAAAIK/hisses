@@ -50,15 +50,16 @@ typedef struct {
     int y;
 } Apple;
 
-// Данные модели
-typedef enum {
-   Spawn,
-   GameOver,
-   Pause,
-   Moving,
-   Reaching,
-   Growing
-} GameState_t;
+// // Данные модели
+// typedef enum {
+//    Spawn,
+//    GameOver,
+//    Pause,
+//    Moving,
+//    Reaching,
+//    Growing
+// } GameState_t;
+
 
 typedef  struct {
     Segment *segments;
@@ -86,18 +87,18 @@ typedef struct model {
 
 
 
-model* model_init();  
-void model_field_init(model* model);
-void model_snake_init(model* model);
-void model_free(model* model);
-void send_action_to_model(UserAction_t);
-void update_model(model* model, UserAction_t action);
-void move_snake(model* model);
-int Model_getScore(const model* model);
-int Model_getLevel(const model* model);
-int Model_getSnakeLength(const model* model);
-Segment Model_getSnakeSegment(const model* model, int index);
-GameState_t Model_getGameState(const model* model);
+model* modelInit();  
+void modelFieldInit(model* model);
+void modelSnakeInit(model* model);
+void modelFree(model* model);
+void sendActionToModel(UserAction_t);
+void updateModel(model* model, UserAction_t action);
+void moveSnake(model* model);
+int modelGetScore(const model* model);
+int modelGetLevel(const model* model);
+int modelGetSnakeLength(const model* model);
+Segment modelGetSnakeSegment(const model* model, int index);
+GameState_t modelGetGameState(const model* model);
 /*
 //void print_field(GameInfo_t *gameInfo, Snake *snake);
 void removePieceFromField(GameInfo_t *gameInfo);
