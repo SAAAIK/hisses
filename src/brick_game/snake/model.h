@@ -50,15 +50,15 @@ typedef struct {
     int y;
 } Apple;
 
-// // Данные модели
-// typedef enum {
-//    Spawn,
-//    GameOver,
-//    Pause,
-//    Moving,
-//    Reaching,
-//    Growing
-// } GameState_t;
+// Данные модели
+typedef enum {
+   Spawn,
+   GameOver,
+   Pause,
+   Moving,
+   Reaching,
+   Growing
+} GameState_t;
 
 
 typedef  struct {

@@ -71,14 +71,14 @@ void GameLoop() {
     keypad(stdscr, TRUE);
     
     // Создаем модель и контроллер
-    model* model = model_init();
+    model* model = modelInit();
     Controller* controller = Controller_init(model);
     
     while (1) {
         // 1. Обработка ввода
         UserAction_t action = userInput();
         // 2. Обновление модели
-        update_model(model, action);
+        updateModel(model, action);
         // 3. Отрисовка
         renderGame(controller);
         // 4. Задержка 100мс
@@ -87,7 +87,7 @@ void GameLoop() {
     
     // Очистка
     Controller_destroy(controller);
-    model_free(model);
+    modelFree(model);
     endwin();
 }
 
