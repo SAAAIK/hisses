@@ -1,226 +1,223 @@
 #include "snake_game_start.h"
 
 // ==========Функция - инициализация игрового поля
-void initGame(GameInfo_t *gameInfo)
+void initGame(GameInfoExt_t *game_info_ext)
 {
     // Динамическое выделение памяти для игрового поля
-    gameInfo->field = malloc(BOARD_HEIGHT * sizeof(int *));
+    game_info_ext->game_info.field = malloc(BOARD_HEIGHT * sizeof(int *));
     for (int i = 0; i < BOARD_HEIGHT; i++)
     {
-        gameInfo->field[i] = malloc(BOARD_WIDTH * sizeof(int));
-        memset(gameInfo->field[i], 0,
+        game_info_ext->game_info.field[i] = malloc(BOARD_WIDTH * sizeof(int));
+        memset(game_info_ext->game_info.field[i], 0,
                BOARD_WIDTH * sizeof(int)); // Инициализация нулями
     }
 
-    gameInfo->snake.segments = malloc(MAX_LENGTH * sizeof(Segment));
-    memset(gameInfo->snake.segments, 0, MAX_LENGTH * sizeof(Segment));
+    game_info_ext->snake.segments = malloc(MAX_LENGTH * sizeof(Segment));
+    memset(game_info_ext->snake.segments, 0, MAX_LENGTH * sizeof(Segment));
 
-    gameInfo->snake.segments = malloc(MAX_LENGTH * sizeof(Segment));
-    memset(gameInfo->snake.segments, 0, MAX_LENGTH * sizeof(Segment));
-
-    gameInfo->level = 1;
-    gameInfo->speed = 1; // Начальная скорость
-    gameInfo->pause = 0; // Игра не на паузе
+    game_info_ext->game_info.level = 1;
+    game_info_ext->game_info.speed = 1; // Начальная скорость
+    game_info_ext->game_info.pause = 0; // Игра не на паузе
 
     // инициализируем змейку
-    spawnSnake(gameInfo);
-    spawnApple(gameInfo);
+    initSnake(game_info_ext);
+    //spawnApple(game_info_ext); //для версии фсм закомментить
 }
 
 // Обновление поля и вывод
-void placePieceOnField(GameInfo_t *gameInfo, Snake *snake)
+void spawnSnake(GameInfoExt_t *game_info_ext)
 {
-    for (int i = 0; i < snake->length; i++)
+    for (int i = 0; i < game_info_ext->snake.length; i++)
     {
-        int x = snake->segments[i].x;
-        int y = snake->segments[i].y;
+        int x = game_info_ext->snake.segments[i].x;
+        int y = game_info_ext->snake.segments[i].y;
         // Проверка границ поля
         if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT)
         {
-            gameInfo->field[y][x] = 1;
+            game_info_ext->game_info.field[y][x] = 1;
         }
     }
 }
 
 // инициализация змейки
-void spawnSnake(GameInfo_t *gameInfo)
+void initSnake(GameInfoExt_t *game_info_ext)
 {
 
-    gameInfo->snake.length = 7; // начинаем с длины 4
-    for (int i = 0; i < gameInfo->snake.length; i++)
+    game_info_ext->snake.length = 7; // начинаем с длины 4
+    for (int i = 0; i < game_info_ext->snake.length; i++)
     {
-        gameInfo->snake.segments[i].x = BOARD_WIDTH / 2 - i; // горизонтально вправо или влево
-        gameInfo->snake.segments[i].y = BOARD_HEIGHT / 2;
+        game_info_ext->snake.segments[i].x = BOARD_WIDTH / 2 - i; // горизонтально вправо или влево
+       game_info_ext->snake.segments[i].y = BOARD_HEIGHT / 2;
     }
-    gameInfo->snake.dir_x = 1; // начальное направление вправо
-    gameInfo->snake.dir_y = 0;
+    game_info_ext->snake.dir_x = 1; // начальное направление вправо
+    game_info_ext->snake.dir_y = 0;
 
-    // Размещаем текущую фигуру на игровом поле
-    placePieceOnField(gameInfo, &gameInfo->snake);
+    // Размещаем змейку на игровом поле
+    spawnSnake(game_info_ext);
 }
 
-void spawnApple(GameInfo_t *gameInfo)
+void spawnApple(GameInfoExt_t *game_info_ext)
 {
     int x, y;
     do
     {
         x = rand() % 10;
         y = rand() % 20;
-    } while (gameInfo->field[y][x] == 1);
+    } while (game_info_ext->game_info.field[y][x] == 1);
 
-    gameInfo->apple.x = x;
-    gameInfo->apple.y = y;
-    gameInfo->field[y][x] = 1;
+    game_info_ext->apple.x = x;
+    game_info_ext->apple.y = y;
+    game_info_ext->game_info.field[y][x] = 1;
 }
 
 // Функция временно удаляет фигуру с игр поля перед проверкой перемещения
-void removePieceFromField(GameInfo_t *gameInfo)
+void removePieceFromField(GameInfoExt_t *game_info_ext)
 { // ++
-    for (int i = 0; i < gameInfo->snake.length; i++)
+    for (int i = 0; i < game_info_ext->snake.length; i++)
     {
-        gameInfo->field[gameInfo->snake.segments[i].y]
-                       [gameInfo->snake.segments[i].x] = 0;
+        game_info_ext->game_info.field[game_info_ext->snake.segments[i].y]
+                       [game_info_ext->snake.segments[i].x] = 0;
     }
 }
 
 // движение змейки вперед при отсутствии ввода от пользователя
-void move_snake(GameInfo_t *gameInfo)
+void move_snake(GameInfoExt_t *game_info_ext)
 {
     //
     // Сдвигаем сегменты: начиная с хвоста к голове
-    if (canMove(gameInfo) == 1)
-    {   removePieceFromField(gameInfo);
+    if (isColliding(game_info_ext) == 1)
+    {   removePieceFromField(game_info_ext);
         //shift state
-        snakeShifting(gameInfo);
-        placePieceOnField(gameInfo, &gameInfo->snake);
+        snakeShifting(game_info_ext);
+        spawnSnake(game_info_ext);
     }
-    else if (canMove(gameInfo) == 2)
-    {   removePieceFromField(gameInfo);
+    else if (isColliding(game_info_ext) == 2)
+    {   removePieceFromField(game_info_ext);
         //shift state
-        snakeShifting(gameInfo);
-        growSnake(gameInfo);
-        placePieceOnField(gameInfo, &gameInfo->snake);
+        snakeShifting(game_info_ext);
+        growSnake(game_info_ext);
+        spawnSnake(game_info_ext);
         //spawn state
-        spawnApple(gameInfo);
+        spawnApple(game_info_ext);
     }
-    else if (canMove(gameInfo) == 0)
+    else if (isColliding(game_info_ext) == 0)
     {
         exit(1);
     }
 }
 
-void snakeShifting (GameInfo_t *gameInfo){
-for (int i = gameInfo->snake.length - 1; i > 0; i--)
+void snakeShifting (GameInfoExt_t *game_info_ext){
+for (int i = game_info_ext->snake.length - 1; i > 0; i--)
         {
-            gameInfo->snake.segments[i] = gameInfo->snake.segments[i - 1];
+            game_info_ext->snake.segments[i] = game_info_ext->snake.segments[i - 1];
         }
         // Обновляем голову в соответствии с направлением
-        gameInfo->snake.segments[0].x += gameInfo->snake.dir_x;
-        gameInfo->snake.segments[0].y += gameInfo->snake.dir_y;
+        game_info_ext->snake.segments[0].x += game_info_ext->snake.dir_x;
+        game_info_ext->snake.segments[0].y += game_info_ext->snake.dir_y;
 }
 
-int canMove(GameInfo_t *gameInfo)
+int isColliding(GameInfoExt_t *game_info_ext)
 { //
-    int newX = gameInfo->snake.segments[0].x + gameInfo->snake.dir_x;
-    int newY = gameInfo->snake.segments[0].y + gameInfo->snake.dir_y;
+    int newX = game_info_ext->snake.segments[0].x + game_info_ext->snake.dir_x;
+    int newY = game_info_ext->snake.segments[0].y + game_info_ext->snake.dir_y;
     // Проверка на выход за границы игрового поля
     if (newX < 0 || newX >= BOARD_WIDTH || newY >= BOARD_HEIGHT || newY < 0)
     {
-        return 0;
+        return 1;
     }
-    if (gameInfo->field[newY][newX] == 1) // Проверка на столкновение с другими фигурами
+    if (game_info_ext->game_info.field[newY][newX] == 1) // Проверка на столкновение с другими фигурами
     {
-        if (newX == gameInfo->apple.x && newY == gameInfo->apple.y)
+        if (newX == game_info_ext->apple.x && newY == game_info_ext->apple.y)
         {
-            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, gameInfo->apple.x, gameInfo->apple.y);
+            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
             return 2;
         }
         else
         {
-            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, gameInfo->apple.x, gameInfo->apple.y);
-            return 0;
+            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
+            return 1;
         }
     }
-    return 1; // Можно переместить
+    return 0; // Можно переместить
 }
 
-void growSnake(GameInfo_t *gameInfo)
+void growSnake(GameInfoExt_t *game_info_ext)
 {
-    if (gameInfo->snake.length < MAX_LENGTH)
+    if (game_info_ext->snake.length < MAX_LENGTH)
     {
         // добавляем новый сегмент в конец (можно просто копировать последний сегмент)
-        gameInfo->snake.segments[gameInfo->snake.length] = gameInfo->snake.segments[gameInfo->snake.length - 1];
-        gameInfo->snake.length++;
+        game_info_ext->snake.segments[game_info_ext->snake.length] = game_info_ext->snake.segments[game_info_ext->snake.length - 1];
+        game_info_ext->snake.length++;
     }
 }
 
-void freeGameResources(GameInfo_t *gameInfo)
+void freeGameResources(GameInfoExt_t *game_info_ext)
 { // ++
     // Освобождение памяти игрового поля
-    if (gameInfo->field != NULL)
+    if (game_info_ext->game_info.field != NULL)
     {
         for (int i = 0; i < BOARD_HEIGHT; i++)
         {
-            if (gameInfo->field[i] != NULL)
+            if (game_info_ext->game_info.field[i] != NULL)
             {
-                free(gameInfo->field[i]);
+                free(game_info_ext->game_info.field[i]);
             }
         }
-        free(gameInfo->field);
-        gameInfo->field = NULL;
+        free(game_info_ext->game_info.field);
+        game_info_ext->game_info.field = NULL;
     }
 
     // Освобождение памяти матрицы следующей фигуры
-    if (gameInfo->snake.segments != NULL)
+    if (game_info_ext->snake.segments != NULL)
     {
         for (int i = 0; i < MAX_LENGTH; i++)
         {
-            free(gameInfo->snake.segments);
-            gameInfo->snake.segments = NULL;
+            free(game_info_ext->snake.segments);
+            game_info_ext->snake.segments = NULL;
         }
     }
 }
 
-void movePieceDown(GameInfo_t *gameInfo)
+void movePieceDown(GameInfoExt_t *game_info_ext)
 {
-    // removePieceFromField(gameInfo);
-    if (gameInfo->snake.dir_x == 1 || gameInfo->snake.dir_x == -1)
+    // removePieceFromField(game_info_ext);
+    if (game_info_ext->snake.dir_x == 1 || game_info_ext->snake.dir_x == -1)
     {
-        gameInfo->snake.dir_x = 0;
-        gameInfo->snake.dir_y = 1;
-        // move_snake(gameInfo);
+        game_info_ext->snake.dir_x = 0;
+        game_info_ext->snake.dir_y = 1;
+        // move_snake(game_info_ext);
     }
 }
 
-void movePieceUp(GameInfo_t *gameInfo)
+void movePieceUp(GameInfoExt_t *game_info_ext)
 {
-    // removePieceFromField(gameInfo);
-    if (gameInfo->snake.dir_x == 1 || gameInfo->snake.dir_x == -1)
+    // removePieceFromField(game_info_ext);
+    if (game_info_ext->snake.dir_x == 1 || game_info_ext->snake.dir_x == -1)
     {
-        gameInfo->snake.dir_x = 0;
-        gameInfo->snake.dir_y = -1;
-        // move_snake(gameInfo);
+        game_info_ext->snake.dir_x = 0;
+        game_info_ext->snake.dir_y = -1;
+        // move_snake(game_info_ext);
     }
 }
 
-void movePieceRight(GameInfo_t *gameInfo)
+void movePieceRight(GameInfoExt_t *game_info_ext)
 {
-    // removePieceFromField(gameInfo);
-    if (gameInfo->snake.dir_y == 1 || gameInfo->snake.dir_y == -1)
+    // removePieceFromField(game_info_ext);
+    if (game_info_ext->snake.dir_y == 1 || game_info_ext->snake.dir_y == -1)
     {
-        gameInfo->snake.dir_x = 1;
-        gameInfo->snake.dir_y = 0;
-        // move_snake(gameInfo);
+        game_info_ext->snake.dir_x = 1;
+        game_info_ext->snake.dir_y = 0;
+        // move_snake(game_info_ext);
     }
 }
 
-void movePieceLeft(GameInfo_t *gameInfo)
+void movePieceLeft(GameInfoExt_t *game_info_ext)
 {
-    // removePieceFromField(gameInfo);
-    if (gameInfo->snake.dir_y == 1 || gameInfo->snake.dir_y == -1)
+    // removePieceFromField(game_info_ext);
+    if (game_info_ext->snake.dir_y == 1 || game_info_ext->snake.dir_y == -1)
     {
-        gameInfo->snake.dir_x = -1;
-        gameInfo->snake.dir_y = 0;
-        // move_snake(gameInfo);
+        game_info_ext->snake.dir_x = -1;
+        game_info_ext->snake.dir_y = 0;
+        // move_snake(game_info_ext);
     }
 }
