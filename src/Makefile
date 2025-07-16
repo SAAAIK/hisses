@@ -1,72 +1,74 @@
-CC=gcc
-CFLAGS=-I./brick_game/tetris -I./gui/cli -std=c11
-LDFLAGS=-L./brick_game/tetris -ltetris_game -lncurses
-CHECK_FLAGS=$(shell pkg-config --cflags --libs check)
-GCOV_FLAGS=-fprofile-arcs -ftest-coverage
-
-# Определение библиотек для тестов в зависимости от ОС
-OS := $(shell uname -s)
-ifeq ($(OS), Darwin)
-	TEST_LIBS = -lcheck -lm -lpthread
-else
-	TEST_LIBS = -lcheck -lsubunit -pthread -lrt -lm
+CC = gcc
+FLAG_C = -c
+ASAN = -g -fsanitize=address
+FLAG_ER = -Wall -Werror -Wextra -std=c11
+VALGRIND_FLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes
+TET_LIB_C = ./brick_game/snake/fsm.c ./brick_game/snake/snake_backend.c ./brick_game/snake/snake_lib.c
+TET_LIB_O = fsm.o snake_backend.o snake_lib.o
+TET_LIB_H = ./brick_game/snake/fsm.h ./brick_game/snake/snake_backend.h ./brick_game/snake/snake_lib.h
+CLI_C = ./gui/cli/cli.c
+CLI_h = ./gui/cli/cli.h
+CLI_O = cli.o
+SUITE_CASES_C = suite_*.c
+SUITE_CASES_O = suite_*.o
+FLAG_TESTS = -lcheck
+TESTS_C=test.c
+TESTS_O=test.c
+ifeq ($(shell uname), Linux)
+	FLAG_TEST +=-lsubunit -lm -lcheck_pic
 endif
 
-# Исходные файлы и исполняемые файлы
-CLI_SOURCES=gui/cli/main.c gui/cli/interface.c gui/cli/user_input.c gui/cli/top_score.c
-EXEC=tetris_game
-TEST_SOURCES=tests/unit_tests.c tests/tests.c
-TEST_EXEC=run_tests
 
-.PHONY: all clean libtetris_game test gcov_report
+all: clean uninstall install 
 
-all: libtetris_game $(EXEC)
-
-libtetris_game:
-	$(CC) $(CFLAGS) -c brick_game/tetris/tetris_game.c -o brick_game/tetris/tetris_game.o
-	ar rcs brick_game/tetris/libtetris_game.a brick_game/tetris/tetris_game.o
-
-$(EXEC): $(CLI_SOURCES)
-	$(CC) $(CFLAGS) $(CLI_SOURCES) $(LDFLAGS) -o $(EXEC)
-
-test: libtetris_game
-	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_SOURCES) brick_game/tetris/tetris_game.c -o $(TEST_EXEC) $(LDFLAGS) $(CHECK_FLAGS) $(TEST_LIBS)
-	./$(TEST_EXEC)
-
-gcov_report: test
-	rm -rf report
-	mkdir report
-	gcovr -r . --html --html-details -o report/gcov_report.html --exclude tests/
-	open report/gcov_report.html
-
-clean:
-	rm -f $(EXEC) $(TEST_EXEC)
-	rm -f brick_game/tetris/*.o brick_game/tetris/libtetris_game.a
-	rm -f *.gcda *.gcno *.o *.html *.css brick_game/tetris/*.gcno
-	rm -rf report
-	rm -rf build
-
-
-leaks:
-	leaks -atExit -- ./tetris_game
-
-style :
-	clang-format --style=google -n brick_game/tetris/*.h brick_game/tetris/*.c gui/cli/*.c gui/cli/*.h
-
-install: all
-	mkdir -p build
-	cp $(EXEC) build/$(EXEC)
+install: snake_lib.a
+	gcc -Wall -Wextra -Werror -Wpedantic -o snake_game snake.c controller.c gui/cli/cli.c snake_lib.a -lncurses
+	make clean
 
 uninstall:
-	rm -rf build
+	-rm -f snake_game 
+
+snake_lib.a:
+	$(CC) $(FLAG_C) $(FLAG_ER) $(TET_LIB_C)  
+	ar rc snake_lib.a $(TET_LIB_O) 
+	ranlib snake_lib.a
+
+test: clean snake_lib.a
+	gcc -g --coverage $(FLAG_ER) $(TESTS_C) -o test snake_lib.a -lcheck_pic -lm -lsubunit
+	./test
+
+gcov_report: test
+	gcc --coverage $(TET_LIB_C) $(TESTS_C) -o greport -lcheck_pic -lm -lsubunit
+	./greport
+	lcov -t "test" -o snake.info -c -d .
+	genhtml -o ./report snake.info --exclude test.c
+	open ./report/index.html
+
+valgrind_test: snake_lib.a
+	$(CC) $(FLAG_C) $(FLAG_ER) $(TESTS_C) -g
+	$(CC) -g $(FLAG_ER) $(FLAG_COV) -o tests $(TET_LIB_C) $(TESTS_O) -lcheck_pic -lm -lsubunit 
+	valgrind $(VALGRIND_FLAGS) ./tests
+
+dvi:
+	open ./README.md
 
 dist:
-	mkdir -p dist
-	tar -cvzf dist/$(DIST_NAME).tar.gz $(DIST_FILES)
+	tar -czf snake.install.tar.gz ./* 
 
-dvi:  
-ifeq ($(OS), Darwin)
-	open ./doc/documentation.md
-else
-	cat ./doc/documentation.md
-endif
+cpp_check:
+	cppcheck --enable=all --force $(TET_LIB_C) $(CLI_C) 
+
+style_check:
+	cp ../materials/linters/.clang-format ./
+	clang-format -n $(TET_LIB_C) $(CLI_C) $(TET_LIB_H) $(CLI_H) 
+	clang-format -i $(TET_LIB_C) $(CLI_C) $(TET_LIB_H) $(CLI_H)
+	rm -rf .clang-format
+
+clean:
+	-rm -rf *.o *.html *.gcda *.gcno *.css *.a *.gcov *.info *.out *.cfg *.txt
+	-rm -f test
+	-rm -f tests
+	-rm -f greport
+	-rm -rf report
+	-rm -f snake.install.tar.gz 
+	find . -type d -name 'tests.dSYM' -exec rm -r {} +

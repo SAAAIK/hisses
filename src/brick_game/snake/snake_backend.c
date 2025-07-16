@@ -1,8 +1,10 @@
-#include "snake_game_start.h"
+#include "snake_backend.h"
 
 // ==========Функция - инициализация игрового поля
 void initGame(GameInfoExt_t *game_info_ext)
 {
+    game_info_ext->game_info.mem_alloc = 0;
+
     // Динамическое выделение памяти для игрового поля
     game_info_ext->game_info.field = malloc(BOARD_HEIGHT * sizeof(int *));
     for (int i = 0; i < BOARD_HEIGHT; i++)
@@ -11,9 +13,13 @@ void initGame(GameInfoExt_t *game_info_ext)
         memset(game_info_ext->game_info.field[i], 0,
                BOARD_WIDTH * sizeof(int)); // Инициализация нулями
     }
+    
+    game_info_ext->game_info.mem_alloc = 1;
 
-    game_info_ext->snake.segments = malloc(MAX_LENGTH * sizeof(Segment));
-    memset(game_info_ext->snake.segments, 0, MAX_LENGTH * sizeof(Segment));
+    game_info_ext->snake.segments = malloc(MAX_LENGTH * sizeof(Segment_t));
+    memset(game_info_ext->snake.segments, 0, MAX_LENGTH * sizeof(Segment_t));
+
+    game_info_ext->game_info.mem_alloc = 2;
 
     game_info_ext->game_info.level = 1;
     game_info_ext->game_info.speed = 1; // Начальная скорость
@@ -21,10 +27,24 @@ void initGame(GameInfoExt_t *game_info_ext)
 
     // инициализируем змейку
     initSnake(game_info_ext);
-    //spawnApple(game_info_ext); //для версии фсм закомментить
+    // spawnApple(game_info_ext); //для версии фсм закомментить
 }
 
-// Обновление поля и вывод
+// инициализация змейки
+void initSnake(GameInfoExt_t *game_info_ext)
+{
+
+    game_info_ext->snake.length = 7; // начинаем с длины 4
+    for (int i = 0; i < game_info_ext->snake.length; i++)
+    {
+        game_info_ext->snake.segments[i].x = BOARD_WIDTH / 2 - i; // горизонтально вправо или влево
+        game_info_ext->snake.segments[i].y = BOARD_HEIGHT / 2;
+    }
+    game_info_ext->snake.dir_x = 1; // начальное направление вправо
+    game_info_ext->snake.dir_y = 0;
+}
+
+// Поместить змейку на поле
 void spawnSnake(GameInfoExt_t *game_info_ext)
 {
     for (int i = 0; i < game_info_ext->snake.length; i++)
@@ -39,23 +59,7 @@ void spawnSnake(GameInfoExt_t *game_info_ext)
     }
 }
 
-// инициализация змейки
-void initSnake(GameInfoExt_t *game_info_ext)
-{
-
-    game_info_ext->snake.length = 7; // начинаем с длины 4
-    for (int i = 0; i < game_info_ext->snake.length; i++)
-    {
-        game_info_ext->snake.segments[i].x = BOARD_WIDTH / 2 - i; // горизонтально вправо или влево
-       game_info_ext->snake.segments[i].y = BOARD_HEIGHT / 2;
-    }
-    game_info_ext->snake.dir_x = 1; // начальное направление вправо
-    game_info_ext->snake.dir_y = 0;
-
-    // Размещаем змейку на игровом поле
-    spawnSnake(game_info_ext);
-}
-
+// Поместить яблоко на поле
 void spawnApple(GameInfoExt_t *game_info_ext)
 {
     int x, y;
@@ -76,7 +80,7 @@ void removePieceFromField(GameInfoExt_t *game_info_ext)
     for (int i = 0; i < game_info_ext->snake.length; i++)
     {
         game_info_ext->game_info.field[game_info_ext->snake.segments[i].y]
-                       [game_info_ext->snake.segments[i].x] = 0;
+                                      [game_info_ext->snake.segments[i].x] = 0;
     }
 }
 
@@ -86,18 +90,20 @@ void move_snake(GameInfoExt_t *game_info_ext)
     //
     // Сдвигаем сегменты: начиная с хвоста к голове
     if (isColliding(game_info_ext) == 1)
-    {   removePieceFromField(game_info_ext);
-        //shift state
+    {
+        removePieceFromField(game_info_ext);
+        // shift state
         snakeShifting(game_info_ext);
         spawnSnake(game_info_ext);
     }
     else if (isColliding(game_info_ext) == 2)
-    {   removePieceFromField(game_info_ext);
-        //shift state
+    {
+        removePieceFromField(game_info_ext);
+        // shift state
         snakeShifting(game_info_ext);
         growSnake(game_info_ext);
         spawnSnake(game_info_ext);
-        //spawn state
+        // spawn state
         spawnApple(game_info_ext);
     }
     else if (isColliding(game_info_ext) == 0)
@@ -106,14 +112,15 @@ void move_snake(GameInfoExt_t *game_info_ext)
     }
 }
 
-void snakeShifting (GameInfoExt_t *game_info_ext){
-for (int i = game_info_ext->snake.length - 1; i > 0; i--)
-        {
-            game_info_ext->snake.segments[i] = game_info_ext->snake.segments[i - 1];
-        }
-        // Обновляем голову в соответствии с направлением
-        game_info_ext->snake.segments[0].x += game_info_ext->snake.dir_x;
-        game_info_ext->snake.segments[0].y += game_info_ext->snake.dir_y;
+void snakeShifting(GameInfoExt_t *game_info_ext)
+{
+    for (int i = game_info_ext->snake.length - 1; i > 0; i--)
+    {
+        game_info_ext->snake.segments[i] = game_info_ext->snake.segments[i - 1];
+    }
+    // Обновляем голову в соответствии с направлением
+    game_info_ext->snake.segments[0].x += game_info_ext->snake.dir_x;
+    game_info_ext->snake.segments[0].y += game_info_ext->snake.dir_y;
 }
 
 int isColliding(GameInfoExt_t *game_info_ext)

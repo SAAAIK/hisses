@@ -1,101 +1,148 @@
-include "snake_game_start.h"
+#include "fsm.h"
 
-void finite_state_machine_func(GameInfo_t *gameInfo, UserAction_t action) {
-  switch (gameInfo->state) {
+GameInfoExt_t *GetCurrentGameInfoExt()
+{
+  static GameInfoExt_t game_info_ext = {0};
+  return &game_info_ext;
+}
 
-    case GameStart:
-      switch (action) {
-        case Start:
-          // здесь должна происходить инициализация игры, поля, змейки и
-          // параметров игры
-          initGame(gameInfo);
-          gameInfo->state = Spawn;
-          break;
-        case Terminate:
-          gameInfo->state = GameExit;
-          break;
+void FiniteStateMachine(GameInfoExt_t *game_info_ext)
+{
+  switch (game_info_ext->state)
+  { // свитч по состояниям
+
+  case kStart: // если состояние в ожидании запуска
+    printf("8");
+    if (game_info_ext->new_input)
+    {
+      switch (
+          game_info_ext
+              ->input)
+      { // если пришел новый ввод от игрока свитч по вводу
+
+      case Start: // если нажали старт
+        // здесь должна происходить инициализация игры, поля, змейки и
+        // параметров игры
+        initGame(game_info_ext);
+        game_info_ext->state = kSpawn;
+        break;
+
+      case Terminate: // если нажали выйти
+        game_info_ext->state = kExit;
+        break;
+
+      default:
+        break;
       }
-      break;
+    }
+    game_info_ext->new_input =
+        false; // отметили, что новый ввод был обработан
+    break;
 
-    case Spawn:
-      spawnSnake(gameInfo);
-      spawnApple(gameInfo);
-      gameInfo->state = Moving;
-      break;
+  case kSpawn:
+    spawnSnake(game_info_ext);
+    spawnApple(game_info_ext);
+    game_info_ext->state = kMoving;
+    break;
 
-    case Moving:
-      switch (action) {
-        case Left:
-          movePieceLeft(gameInfo);
-          gameInfo->state = Shifting;
-          break;
-        case Right:
-          movePieceRight(gameInfo);
-          gameInfo->state = Shifting;
-          break;
-        case Down:
-          movePieceDown(gameInfo);
-          gameInfo->state = Shifting;
-          break;
-        case Up:
-          movePieceUp(gameInfo);
-          gameInfo->state = Shifting;
-          break;
-        case Action:
-          // ускорение змейки
-          gameInfo->state = Shifting;
-          break;
-        case Pause:
-          // пауза
-          gameInfo->state = Pause;
-          break;
-        case Terminate:
-          // переходим в состояние выхода
-          gameInfo->state = GameExit;
-          break;
-      }
-      break;
-
-    case Shifting:
-      if (isColliding(gameInfo) == 0) {
-        removePieceFromField(gameInfo);
-        snakeShifting(gameInfo);
-        spawnSnake(gameInfo);
-        gameInfo->state = Moving;
-
-      } else if (isColliding(gameInfo) == 1 || isColliding(gameInfo) == 2) {
-        gameInfo->state = Colliding;
-      }
-      break;
-
-    case Colliding:
-      if (isColliding(gameInfo) == 2)  // врезались в яблоко
+  case kMoving:
+    if (game_info_ext->new_input)
+    {
+      switch (game_info_ext->input)
       {
-        removePieceFromField(gameInfo);
-        snakeShifting(gameInfo);
-        growSnake(gameInfo);
-        gameInfo->state = Spawn;
+      case Left:
+        movePieceLeft(game_info_ext);
+        game_info_ext->state = kShifting;
+        break;
+      case Right:
+        movePieceRight(game_info_ext);
+        game_info_ext->state = kShifting;
+        break;
+      case Down:
+        movePieceDown(game_info_ext);
+        game_info_ext->state = kShifting;
+        break;
+      case Up:
+        movePieceUp(game_info_ext);
+        game_info_ext->state = kShifting;
+        break;
+      case Action:
+        // ускорение змейки
+        game_info_ext->state = kShifting;
+        break;
+      case Pause:
+        game_info_ext->state = kPause;
+        game_info_ext->game_info.pause = PAUSE;
+        break;
+      case Terminate:
+        // переходим в состояние выхода
+        game_info_ext->state = kExit;
+        break;
 
-      } else if (isColliding(gameInfo) == 1) {
-        gameInfo->state = GameOver;
+      default:
+        break;
       }
-      break;
+    }
+    game_info_ext->new_input = false;
+    break;
 
-    case GameOver:
+  case kShifting:
+    if (isColliding(game_info_ext) == 0)
+    {
+      removePieceFromField(game_info_ext);
+      snakeShifting(game_info_ext);
+      spawnSnake(game_info_ext);
+      game_info_ext->state = kMoving;
+    }
+    else if (isColliding(game_info_ext) == 1 ||
+             isColliding(game_info_ext) == 2)
+    {
+      game_info_ext->state = kColliding;
+    }
+    break;
+
+  case kColliding:
+    if (isColliding(game_info_ext) == 2) // врезались в яблоко
+    {
+      removePieceFromField(game_info_ext);
+      snakeShifting(game_info_ext);
+      growSnake(game_info_ext);
+      game_info_ext->state = kSpawn;
+    }
+    else if (isColliding(game_info_ext) == 1)
+    {
+      game_info_ext->state = kGameOver;
+    }
+    break;
+
+  case kGameOver:
     //
-      gameInfo->state = GameStart;
-      break;
+    game_info_ext->state = kStart;
+    game_info_ext->game_info.pause = GAMEOVER;
+    break;
 
-    case GamePause:
-      // вопрос как реализовывать паузу
+  case kPause:
+    switch (game_info_ext->input)
+    {
+    case Pause:
+      game_info_ext->game_info.pause = PLAYING;
+      game_info_ext->state = kMoving;
       break;
-
-    case GameExit:
-      freeGameResources(gameInfo);
+    case Terminate:
+      game_info_ext->state = kExit;
       break;
-
     default:
       break;
+    }
+    break;
+
+  case kExit:
+    freeGameResources(game_info_ext);
+    game_info_ext->game_info.pause = EXITING;
+    break;
+
+  default:
+    break;
   }
 }
 

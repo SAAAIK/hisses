@@ -4,7 +4,7 @@ all:
 
 spec:
 	rm -f ./a.out
-	gcc -Wall -Werror -Wextra controller.c model.c interface.c -lncurses
+	gcc -Wall -Werror -Wextra model.c controller.c interface.c -lncurses
 	./a.out
 
 spec_1:

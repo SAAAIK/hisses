@@ -1,0 +1,95 @@
+void dispatch(UserAction_t action, bool hold) {
+  (void)hold;
+
+  Tetris *tetris = provide_tetris();
+  switch (tetris->state) {
+    case TETRIS_READY_STATE:
+      switch (action) {
+        case Start:
+          tetris->start(tetris);
+          break;
+        case Terminate:
+          tetris->terminate(tetris);
+          break;
+
+        default:
+          break;
+      }
+      break;
+
+    case TETRIS_SPAWN_STATE:
+      switch (action) {
+        case Pause:
+          tetris->pause(tetris);
+          break;
+        case Terminate:
+          tetris->terminate(tetris);
+          break;
+
+        default:
+          break;
+      }
+      break;
+
+    case TETRIS_MOVING_STATE:
+      switch (action) {
+        case Left:
+          tetris->left(tetris, hold);
+          break;
+        case Right:
+          tetris->right(tetris, hold);
+          break;
+        case Up:
+          tetris->up(tetris, hold);
+          break;
+        case Down:
+          tetris->down(tetris, hold);
+          break;
+        case Action:
+          tetris->action(tetris, hold);
+          break;
+        case Pause:
+          tetris->pause(tetris);
+          break;
+        case Terminate:
+          tetris->terminate(tetris);
+          break;
+
+        default:
+          break;
+      }
+      break;
+
+    case TETRIS_PAUSE_STATE:
+      switch (action) {
+        case Start:
+        case Pause:
+          tetris->pause(tetris);
+          break;
+        case Terminate:
+          tetris->terminate(tetris);
+          break;
+
+        default:
+          break;
+      }
+      break;
+
+    case TETRIS_GAMEOVER_STATE:
+      switch (action) {
+        case Start:
+          tetris->start(tetris);
+          break;
+        case Terminate:
+          tetris->terminate(tetris);
+          break;
+
+        default:
+          break;
+      }
+      break;
+
+    default:
+      break;
+  }
+}

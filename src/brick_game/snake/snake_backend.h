@@ -9,12 +9,13 @@
 // Максимальная длинна
 #define MAX_LENGTH 200
 
-#include <ncurses.h>
 #include <stdbool.h> // Для использования bool
 #include <stdio.h>
 #include <stdlib.h> // для rand() и srand()
 #include <string.h>
 #include <time.h>
+
+#include "snake_lib.h"
 
 typedef struct {
     int x;
@@ -33,49 +34,40 @@ typedef struct {
     int y;
 } Apple_t;
 
-// // Структура состояния игры
-// typedef enum {
-//   //GameState_WaitingStart,
-//   GameState_Running,
-//   //GameState_Paused,
-//   //GameState_Over
-// } GameState_t; //
-
 // Данные модели
 typedef enum {
-   GameStart,
-   Spawn,
-   Moving,
-   Shifting,
-   Colliding,
-   GameOver,
-   GamePause,
-   GameExit
+   kStart,
+   kSpawn,
+   kMoving,
+   kShifting,
+   kColliding,
+   kGameOver,
+   kPause,
+   kExit
 } GameState_t;
 
-// Типы  действий пользователя
-typedef enum {
-  Start,
-  Pause,
-  Terminate,
-  Left,
-  Right,
-  Down,
-  Up,
-  Action,
-  NoAction
-} UserAction_t; //
+// // Типы  действий пользователя
+// typedef enum {
+//   Start,
+//   Pause,
+//   Terminate,
+//   Left,
+//   Right,
+//   Down,
+//   Up,
+//   Action
+// } UserAction_t; //
 
-// Структура для передачи информации об игре в интерфейс
-typedef struct {
-  int **field; // Указатель на игровое поле
-  int **next; // Указатель на змейку
-  int score;                   // Текущий счет
-  int high_score;              // Рекордный счет
-  int level;                   // Текущий уровень
-  int speed;                   // Скорость падения фигур
-  int pause;                   // Состояние паузы игры
-} GameInfo_t;
+// // Структура для передачи информации об игре в интерфейс
+// typedef struct {
+//   int **field; // Указатель на игровое поле
+//   int **next; // Указатель на змейку
+//   int score;                   // Текущий счет
+//   int high_score;              // Рекордный счет
+//   int level;                   // Текущий уровень
+//   int speed;                   // Скорость падения фигур
+//   int pause;                   // Состояние паузы игры
+// } GameInfo_t;
 
 typedef struct {
   GameInfo_t game_info;
@@ -83,10 +75,12 @@ typedef struct {
   Snake_t snake;
   Apple_t apple;
   GameState_t state;           // Текущее состояние игры
-
+  UserAction_t input;
+  bool new_input;
+  //bool mem_alloc;
 } GameInfoExt_t;
 
-void userInput(GameInfoExt_t *game_info_ext, UserAction_t action/*, bool hold*/);
+//void userInput(GameInfoExt_t *game_info_ext, UserAction_t action/*, bool hold*/);
 
 void initGame(GameInfoExt_t *game_info_ext);
 //void print_field(GameInfoExt_t *game_info_ext, Snake *snake);
