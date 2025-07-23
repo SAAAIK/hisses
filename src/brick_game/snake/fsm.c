@@ -12,7 +12,6 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
   { // свитч по состояниям
 
   case kStart: // если состояние в ожидании запуска
-    printf("8");
     if (game_info_ext->new_input)
     {
       switch (
@@ -52,22 +51,17 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
       {
       case Left:
         movePieceLeft(game_info_ext);
-        game_info_ext->state = kShifting;
         break;
       case Right:
         movePieceRight(game_info_ext);
-        game_info_ext->state = kShifting;
         break;
       case Down:
         movePieceDown(game_info_ext);
-        game_info_ext->state = kShifting;
         break;
       case Up:
         movePieceUp(game_info_ext);
-        game_info_ext->state = kShifting;
         break;
       case Action:
-        // ускорение змейки
         game_info_ext->state = kShifting;
         break;
       case Pause:
@@ -78,11 +72,12 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
         // переходим в состояние выхода
         game_info_ext->state = kExit;
         break;
-
       default:
         break;
       }
     }
+    if(CheckIsItTimeToShift(game_info_ext)){
+    game_info_ext->state = kShifting;}
     game_info_ext->new_input = false;
     break;
 
@@ -107,6 +102,8 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
       removePieceFromField(game_info_ext);
       snakeShifting(game_info_ext);
       growSnake(game_info_ext);
+      game_info_ext->game_info.score++;
+      GameScore(game_info_ext);
       game_info_ext->state = kSpawn;
     }
     else if (isColliding(game_info_ext) == 1)
@@ -122,7 +119,7 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
     break;
 
   case kPause:
-    switch (game_info_ext->input)
+    if(game_info_ext->new_input) switch (game_info_ext->input)
     {
     case Pause:
       game_info_ext->game_info.pause = PLAYING;
@@ -134,6 +131,7 @@ void FiniteStateMachine(GameInfoExt_t *game_info_ext)
     default:
       break;
     }
+    game_info_ext->new_input = false;
     break;
 
   case kExit:

@@ -3,8 +3,14 @@
 // ==========Функция - инициализация игрового поля
 void initGame(GameInfoExt_t *game_info_ext)
 {
-    game_info_ext->game_info.mem_alloc = 0;
-
+    game_info_ext->game_info.next = malloc(4 * sizeof(int *));
+    for (int i = 0; i < 4; i++)
+    {
+        game_info_ext->game_info.next[i] = malloc(4 * sizeof(int));
+        memset(game_info_ext->game_info.next[i], 0,
+               4 * sizeof(int)); // Инициализация нулями
+    }
+    
     // Динамическое выделение памяти для игрового поля
     game_info_ext->game_info.field = malloc(BOARD_HEIGHT * sizeof(int *));
     for (int i = 0; i < BOARD_HEIGHT; i++)
@@ -13,17 +19,16 @@ void initGame(GameInfoExt_t *game_info_ext)
         memset(game_info_ext->game_info.field[i], 0,
                BOARD_WIDTH * sizeof(int)); // Инициализация нулями
     }
-    
-    game_info_ext->game_info.mem_alloc = 1;
+
 
     game_info_ext->snake.segments = malloc(MAX_LENGTH * sizeof(Segment_t));
     memset(game_info_ext->snake.segments, 0, MAX_LENGTH * sizeof(Segment_t));
 
-    game_info_ext->game_info.mem_alloc = 2;
-
     game_info_ext->game_info.level = 1;
     game_info_ext->game_info.speed = 1; // Начальная скорость
     game_info_ext->game_info.pause = 0; // Игра не на паузе
+
+    LoadMaxScore(game_info_ext);
 
     // инициализируем змейку
     initSnake(game_info_ext);
@@ -34,7 +39,7 @@ void initGame(GameInfoExt_t *game_info_ext)
 void initSnake(GameInfoExt_t *game_info_ext)
 {
 
-    game_info_ext->snake.length = 7; // начинаем с длины 4
+    game_info_ext->snake.length = 4; // начинаем с длины 4
     for (int i = 0; i < game_info_ext->snake.length; i++)
     {
         game_info_ext->snake.segments[i].x = BOARD_WIDTH / 2 - i; // горизонтально вправо или влево
@@ -84,33 +89,33 @@ void removePieceFromField(GameInfoExt_t *game_info_ext)
     }
 }
 
-// движение змейки вперед при отсутствии ввода от пользователя
-void move_snake(GameInfoExt_t *game_info_ext)
-{
-    //
-    // Сдвигаем сегменты: начиная с хвоста к голове
-    if (isColliding(game_info_ext) == 1)
-    {
-        removePieceFromField(game_info_ext);
-        // shift state
-        snakeShifting(game_info_ext);
-        spawnSnake(game_info_ext);
-    }
-    else if (isColliding(game_info_ext) == 2)
-    {
-        removePieceFromField(game_info_ext);
-        // shift state
-        snakeShifting(game_info_ext);
-        growSnake(game_info_ext);
-        spawnSnake(game_info_ext);
-        // spawn state
-        spawnApple(game_info_ext);
-    }
-    else if (isColliding(game_info_ext) == 0)
-    {
-        exit(1);
-    }
-}
+// // движение змейки вперед при отсутствии ввода от пользователя
+// void move_snake(GameInfoExt_t *game_info_ext)
+// {
+//     //
+//     // Сдвигаем сегменты: начиная с хвоста к голове
+//     if (isColliding(game_info_ext) == 1)
+//     {
+//         removePieceFromField(game_info_ext);
+//         // shift state
+//         snakeShifting(game_info_ext);
+//         spawnSnake(game_info_ext);
+//     }
+//     else if (isColliding(game_info_ext) == 2)
+//     {
+//         removePieceFromField(game_info_ext);
+//         // shift state
+//         snakeShifting(game_info_ext);
+//         growSnake(game_info_ext);
+//         spawnSnake(game_info_ext);
+//         // spawn state
+//         spawnApple(game_info_ext);
+//     }
+//     else if (isColliding(game_info_ext) == 0)
+//     {
+//         exit(1);
+//     }
+// }
 
 void snakeShifting(GameInfoExt_t *game_info_ext)
 {
@@ -136,12 +141,12 @@ int isColliding(GameInfoExt_t *game_info_ext)
     {
         if (newX == game_info_ext->apple.x && newY == game_info_ext->apple.y)
         {
-            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
+            //printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
             return 2;
         }
-        else
+        else if (game_info_ext->game_info.field[newY][newX] != game_info_ext->game_info.field[game_info_ext->snake.segments[game_info_ext->snake.length-1].y][game_info_ext->snake.segments[game_info_ext->snake.length-1].x])
         {
-            printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
+            //printf("\nx = %d, y = %d\n ap.x = %d, ap.y = %d\n", newX, newY, game_info_ext->apple.x, game_info_ext->apple.y);
             return 1;
         }
     }
@@ -182,6 +187,19 @@ void freeGameResources(GameInfoExt_t *game_info_ext)
             free(game_info_ext->snake.segments);
             game_info_ext->snake.segments = NULL;
         }
+    }
+
+    if (game_info_ext->game_info.next != NULL)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (game_info_ext->game_info.next[i] != NULL)
+            {
+                free(game_info_ext->game_info.next[i]);
+            }
+        }
+        free(game_info_ext->game_info.next);
+        game_info_ext->game_info.next = NULL;
     }
 }
 
@@ -227,4 +245,64 @@ void movePieceLeft(GameInfoExt_t *game_info_ext)
         game_info_ext->snake.dir_y = 0;
         // move_snake(game_info_ext);
     }
+}
+
+bool CheckIsItTimeToShift(GameInfoExt_t *game_info_ext){
+    bool res = false;
+if (!game_info_ext->timer_on){
+    game_info_ext->timer = CurrentTime();
+    game_info_ext->timer_on = true;
+}
+game_info_ext->game_info.speed = 1000 / game_info_ext->game_info.level;
+if (TimeDiff(game_info_ext->timer) >= (long long unsigned int)game_info_ext->game_info.speed && game_info_ext->state != kExit && game_info_ext->game_info.pause != PAUSE) {
+    game_info_ext->timer_on = false;
+    game_info_ext->timer = 0;
+    res = true;
+  }
+  return res;
+}
+
+unsigned long long CurrentTime() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (unsigned long long)(tv.tv_sec) * 1000 +
+         (unsigned long long)(tv.tv_usec) / 1000;
+}
+
+unsigned long long TimeDiff(unsigned long long timer) {
+  return CurrentTime() - timer;
+}
+
+void GameScore(GameInfoExt_t *game_info_ext){
+    if (game_info_ext->game_info.score > game_info_ext->game_info.high_score) {
+    game_info_ext->game_info.high_score = game_info_ext->game_info.score;
+    SaveMaxScore(game_info_ext);
+  }
+  SetLevel(game_info_ext);
+}
+
+void SetLevel(GameInfoExt_t *game_info_ext){
+int lvl = game_info_ext->game_info.level;
+  int score = game_info_ext->game_info.score;
+  if (lvl < 11 && (score >= (lvl * 5))) game_info_ext->game_info.level++;
+}
+
+void LoadMaxScore(GameInfoExt_t *game_info_ext) {
+  FILE *file = NULL;
+  int high_score = 0;
+  file = fopen("high_score.txt", "r");
+  if (file) {
+    fscanf(file, "%d", &high_score);
+    game_info_ext->game_info.high_score = high_score;
+    fclose(file);
+  }
+}
+
+void SaveMaxScore(GameInfoExt_t *game_info_ext) {
+  FILE *file = NULL;
+  file = fopen("high_score.txt", "w");
+  if (file) {
+    fprintf(file, "%d", game_info_ext->game_info.high_score);
+    fclose(file);
+  }
 }

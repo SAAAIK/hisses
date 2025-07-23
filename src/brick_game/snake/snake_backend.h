@@ -9,11 +9,16 @@
 // Максимальная длинна
 #define MAX_LENGTH 200
 
+#define PLAYING 0
+#define PAUSE 1
+#define GAMEOVER 2
+#define EXITING 3
+
 #include <stdbool.h> // Для использования bool
 #include <stdio.h>
 #include <stdlib.h> // для rand() и srand()
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include "snake_lib.h"
 
@@ -77,7 +82,8 @@ typedef struct {
   GameState_t state;           // Текущее состояние игры
   UserAction_t input;
   bool new_input;
-  //bool mem_alloc;
+  bool timer_on;
+  unsigned long long timer;
 } GameInfoExt_t;
 
 //void userInput(GameInfoExt_t *game_info_ext, UserAction_t action/*, bool hold*/);
@@ -99,4 +105,12 @@ void movePieceLeft(GameInfoExt_t *game_info_ext);
 void movePieceUp(GameInfoExt_t *game_info_ext);
 void movePieceDown(GameInfoExt_t *game_info_ext);
 void freeGameResources(GameInfoExt_t *game_info_ext);
+bool CheckIsItTimeToShift(GameInfoExt_t *game_info_ext);
+unsigned long long CurrentTime();
+unsigned long long TimeDiff(unsigned long long timer);
+void GameScore(GameInfoExt_t *game_info_ext);
+void SetLevel(GameInfoExt_t *game_info_ext);
+
+void LoadMaxScore(GameInfoExt_t *game_info_ext);
+void SaveMaxScore(GameInfoExt_t *game_info_ext);
 #endif

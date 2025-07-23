@@ -16,6 +16,6 @@ void game_loop()
     game_info = updateCurrentState();
     FrontendFunc(game_info);
     UserInputToUserAction(getch());
-    napms(1000);
+    //napms(1000);
   }
 }
